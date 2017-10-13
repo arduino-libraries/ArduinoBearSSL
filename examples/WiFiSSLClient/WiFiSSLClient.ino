@@ -30,16 +30,8 @@ char server[] = "google.com";    // name address for Google (using DNS)
 WiFiClient client;
 BearSSLClient sslClient(client);
 
-extern "C" {
-  #include <sys/time.h>
-  
-  int _gettimeofday(struct timeval* tp, void* /*tzvp*/)
-  {
-    tp->tv_sec = WiFi.getTime();
-    tp->tv_usec = 0;
-
-    return 0;
-  }
+unsigned long getTime() {
+  return WiFi.getTime();
 }
 
 void setup() {
@@ -68,6 +60,8 @@ void setup() {
   }
   Serial.println("Connected to wifi");
   printWiFiStatus();
+
+  ArduinoBearSSL.onGetTime(getTime);
 
   Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
