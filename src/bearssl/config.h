@@ -99,6 +99,17 @@
  */
 
 /*
+ * When BR_RDRAND is enabled, the SSL engine will use the RDRAND opcode
+ * to automatically obtain quality randomness for seeding its internal
+ * PRNG. Since that opcode is present only in recent x86 CPU, its
+ * support is dynamically tested; if the current CPU does not support
+ * it, then another random source will be used, such as /dev/urandom or
+ * CryptGenRandom().
+ *
+#define BR_RDRAND   1
+ */
+
+/*
  * When BR_USE_URANDOM is enabled, the SSL engine will use /dev/urandom
  * to automatically obtain quality randomness for seedings its internal
  * PRNG.

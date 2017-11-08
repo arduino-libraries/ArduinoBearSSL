@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#define BR_ENABLE_INTRINSICS   1
 #include "inner.h"
 
 /*
@@ -30,22 +31,6 @@
  */
 
 #if BR_AES_X86NI
-
-#if BR_AES_X86NI_GCC
-#if BR_AES_X86NI_GCC_OLD
-#pragma GCC push_options
-#pragma GCC target("sse2,sse4.1,aes,pclmul")
-#endif
-#include <wmmintrin.h>
-#include <cpuid.h>
-#if BR_AES_X86NI_GCC_OLD
-#pragma GCC pop_options
-#endif
-#endif
-
-#if BR_AES_X86NI_MSC
-#include <intrin.h>
-#endif
 
 /* see inner.h */
 int
@@ -56,35 +41,10 @@ br_aes_x86ni_supported(void)
 	 *   19   SSE4.1 (used for _mm_insert_epi32(), for AES-CTR)
 	 *   25   AES-NI
 	 */
-#define MASK   0x02080000
-
-#if BR_AES_X86NI_GCC
-	unsigned eax, ebx, ecx, edx;
-
-	if (__get_cpuid(1, &eax, &ebx, &ecx, &edx)) {
-		return (ecx & MASK) == MASK;
-	} else {
-		return 0;
-	}
-#elif BR_AES_X86NI_MSC
-	int info[4];
-
-	__cpuid(info, 1);
-	return ((uint32_t)info[2] & MASK) == MASK;
-#else
-	return 0;
-#endif
-
-#undef MASK
+	return br_cpuid(0, 0, 0x02080000, 0);
 }
 
-/*
- * Per-function attributes appear unreliable on old GCC, so we use the
- * pragma for all remaining functions in this file.
- */
-#if BR_AES_X86NI_GCC_OLD
-#pragma GCC target("sse2,sse4.1,aes,pclmul")
-#endif
+BR_TARGETS_X86_UP
 
 BR_TARGET("sse2,aes")
 static inline __m128i
@@ -274,5 +234,7 @@ br_aes_x86ni_keysched_dec(unsigned char *skni, const void *key, size_t len)
 	_mm_storeu_si128((void *)(skni + (num_rounds << 4)), sk[0]);
 	return num_rounds;
 }
+
+BR_TARGETS_X86_DOWN
 
 #endif

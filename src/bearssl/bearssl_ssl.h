@@ -833,6 +833,14 @@ typedef struct {
 
 	/*
 	 * Context RNG.
+	 *
+	 *   rng_init_done is initially 0. It is set to 1 when the
+	 *   basic structure of the RNG is set, and 2 when some
+	 *   entropy has been pushed in. The value 2 marks the RNG
+	 *   as "properly seeded".
+	 *
+	 *   rng_os_rand_done is initially 0. It is set to 1 when
+	 *   some seeding from the OS or hardware has been attempted.
 	 */
 	br_hmac_drbg_context rng;
 	int rng_init_done;

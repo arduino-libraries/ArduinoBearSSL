@@ -69,7 +69,7 @@ void br_pem_decoder_run(void *t0ctx);
 
 #include "inner.h"
 
-#define CTX   ((br_pem_decoder_context *)((unsigned char *)t0ctx - offsetof(br_pem_decoder_context, cpu)))
+#define CTX   ((br_pem_decoder_context *)(void *)((unsigned char *)t0ctx - offsetof(br_pem_decoder_context, cpu)))
 
 /* see bearssl_pem.h */
 void

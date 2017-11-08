@@ -75,7 +75,7 @@ void br_ssl_hs_client_run(void *t0ctx);
 /*
  * This macro evaluates to a pointer to the current engine context.
  */
-#define ENG  ((br_ssl_engine_context *)((unsigned char *)t0ctx - offsetof(br_ssl_engine_context, cpu)))
+#define ENG  ((br_ssl_engine_context *)(void *)((unsigned char *)t0ctx - offsetof(br_ssl_engine_context, cpu)))
 
 
 
@@ -1397,7 +1397,7 @@ br_ssl_hs_client_run(void *t0ctx)
 				/* get16 */
 
 	size_t addr = (size_t)T0_POP();
-	T0_PUSH(*(uint16_t *)((unsigned char *)ENG + addr));
+	T0_PUSH(*(uint16_t *)(void *)((unsigned char *)ENG + addr));
 
 				}
 				break;
@@ -1405,7 +1405,7 @@ br_ssl_hs_client_run(void *t0ctx)
 				/* get32 */
 
 	size_t addr = (size_t)T0_POP();
-	T0_PUSH(*(uint32_t *)((unsigned char *)ENG + addr));
+	T0_PUSH(*(uint32_t *)(void *)((unsigned char *)ENG + addr));
 
 				}
 				break;
@@ -1557,7 +1557,7 @@ br_ssl_hs_client_run(void *t0ctx)
 				/* set16 */
 
 	size_t addr = (size_t)T0_POP();
-	*(uint16_t *)((unsigned char *)ENG + addr) = (uint16_t)T0_POP();
+	*(uint16_t *)(void *)((unsigned char *)ENG + addr) = (uint16_t)T0_POP();
 
 				}
 				break;
@@ -1565,7 +1565,7 @@ br_ssl_hs_client_run(void *t0ctx)
 				/* set32 */
 
 	size_t addr = (size_t)T0_POP();
-	*(uint32_t *)((unsigned char *)ENG + addr) = (uint32_t)T0_POP();
+	*(uint32_t *)(void *)((unsigned char *)ENG + addr) = (uint32_t)T0_POP();
 
 				}
 				break;

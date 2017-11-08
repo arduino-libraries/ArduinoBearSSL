@@ -253,6 +253,41 @@ br_hmac_drbg_get_hash(const br_hmac_drbg_context *ctx)
 	return ctx->digest_class;
 }
 
+/**
+ * \brief Type for a provider of entropy seeds.
+ *
+ * A "seeder" is a function that is able to obtain random values from
+ * some source and inject them as entropy seed in a PRNG. A seeder
+ * shall guarantee that the total entropy of the injected seed is large
+ * enough to seed a PRNG for purposes of cryptographic key generation
+ * (i.e. at least 128 bits).
+ *
+ * A seeder may report a failure to obtain adequate entropy. Seeders
+ * shall endeavour to fix themselves transient errors by trying again;
+ * thus, callers may consider reported errors as permanent.
+ *
+ * \param ctx   PRNG context to seed.
+ * \return  1 on success, 0 on error.
+ */
+typedef int (*br_prng_seeder)(const br_prng_class **ctx);
+
+/**
+ * \brief Get a seeder backed by the operating system or hardware.
+ *
+ * Get a seeder that feeds on RNG facilities provided by the current
+ * operating system or hardware. If no such facility is known, then 0
+ * is returned.
+ *
+ * If `name` is not `NULL`, then `*name` is set to a symbolic string
+ * that identifies the seeder implemention. If no seeder is returned
+ * and `name` is not `NULL`, then `*name` is set to a pointer to the
+ * constant string `"none"`.
+ *
+ * \param name   receiver for seeder name, or `NULL`.
+ * \return  the system seeder, if available, or 0.
+ */
+br_prng_seeder br_prng_seeder_system(const char **name);
+
 #ifdef __cplusplus
 }
 #endif

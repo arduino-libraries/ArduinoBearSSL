@@ -22,20 +22,17 @@
  * SOFTWARE.
  */
 
+#define BR_ENABLE_INTRINSICS   1
 #include "inner.h"
 
 #if BR_AES_X86NI
 
-#if BR_AES_X86NI_GCC
-#if BR_AES_X86NI_GCC_OLD
-#pragma GCC target("sse2,sse4.1,aes,pclmul")
-#endif
-#include <wmmintrin.h>
-#endif
-
-#if BR_AES_X86NI_MSC
-#include <intrin.h>
-#endif
+/* see bearssl_block.h */
+const br_block_cbcenc_class *
+br_aes_x86ni_cbcenc_get_vtable(void)
+{
+	return br_aes_x86ni_supported() ? &br_aes_x86ni_cbcenc_vtable : NULL;
+}
 
 /* see bearssl_block.h */
 void
@@ -45,6 +42,8 @@ br_aes_x86ni_cbcenc_init(br_aes_x86ni_cbcenc_keys *ctx,
 	ctx->vtable = &br_aes_x86ni_cbcenc_vtable;
 	ctx->num_rounds = br_aes_x86ni_keysched_enc(ctx->skey.skni, key, len);
 }
+
+BR_TARGETS_X86_UP
 
 /* see bearssl_block.h */
 BR_TARGET("sse2,aes")
@@ -98,6 +97,8 @@ br_aes_x86ni_cbcenc_run(const br_aes_x86ni_cbcenc_keys *ctx,
 	_mm_storeu_si128(iv, ivx);
 }
 
+BR_TARGETS_X86_DOWN
+
 /* see bearssl_block.h */
 const br_block_cbcenc_class br_aes_x86ni_cbcenc_vtable = {
 	sizeof(br_aes_x86ni_cbcenc_keys),
@@ -108,13 +109,6 @@ const br_block_cbcenc_class br_aes_x86ni_cbcenc_vtable = {
 	(void (*)(const br_block_cbcenc_class *const *, void *, void *, size_t))
 		&br_aes_x86ni_cbcenc_run
 };
-
-/* see bearssl_block.h */
-const br_block_cbcenc_class *
-br_aes_x86ni_cbcenc_get_vtable(void)
-{
-	return br_aes_x86ni_supported() ? &br_aes_x86ni_cbcenc_vtable : NULL;
-}
 
 #else
 
