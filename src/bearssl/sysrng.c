@@ -139,6 +139,23 @@ seeder_win32(const br_prng_class **ctx)
 }
 #endif
 
+#ifdef ARDUINO
+#include <stdlib.h>
+
+static int
+seeder_arduino(const br_prng_class **ctx)
+{
+	#warning "seeder_arduino: pseudo entropy injected!"
+	unsigned char buf[32];
+
+	for (size_t i = 0; i < sizeof(buf); i++) {
+		buf[i] = rand() % 256;
+	}
+	(*ctx)->update(ctx, buf, sizeof(buf));
+	return 1;
+}
+#endif
+
 /* see bearssl_rand.h.h */
 br_prng_seeder
 br_prng_seeder_system(const char **name)
@@ -161,6 +178,12 @@ br_prng_seeder_system(const char **name)
 		*name = "win32";
 	}
 	return &seeder_win32;
+#endif
+#ifdef ARDUINO
+	if (name != NULL) {
+		*name = "arduino";
+	}
+	return &seeder_arduino;
 #endif
 	if (name != NULL) {
 		*name = "none";
