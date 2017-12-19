@@ -1,6 +1,7 @@
 #include <ArduinoBearSSL.h>
 #include <utility/ECC508.h>
 #include <utility/ECC508CSR.h>
+#include <utility/ECC508TLSConfig.h>
 
 void setup() {
   Serial.begin(9600);
@@ -9,6 +10,28 @@ void setup() {
   if (!ECC508.begin()) {
     Serial.println("No ECC508 present!");
     while (1);
+  }
+
+  if (!ECC508.locked()) {
+    String lock = promptAndReadLine("The ECC508 on your board is not locked, would you like to configure and lock it now? (y/N): ");
+
+    if (!lock.startsWith("y")) {
+      Serial.println("Unfortunately you can't proceed without locking it :(");
+      while (1);
+    }
+
+    if (!ECC508.writeConfiguration(DEFAULT_ECC508_TLS_CONFIG)) {
+      Serial.println("Writing ECC508 configuration failed!");
+      while (1);
+    }
+
+    if (!ECC508.lock()) {
+      Serial.println("Locking ECC508 configuration failed!");
+      while (1);
+    }
+
+    Serial.println("ECC508 locked successfully");
+    Serial.println();
   }
 
   Serial.println("Hi there, in order to generate a new CSR for your board, we'll need the following information ...");
@@ -20,7 +43,7 @@ void setup() {
   String organization       = promptAndReadLine("Organization Name (eg, company): ");
   String organizationalUnit = promptAndReadLine("Organizational Unit Name (eg, section): ");
   String common             = promptAndReadLine("Common Name (e.g. server FQDN or YOUR name): ");
-  String slot               = promptAndReadLine("What ECC508 slots would you like to use? (0 - 7): ");
+  String slot               = promptAndReadLine("What ECC508 slots would you like to use? (0 - 4): ");
   String generateNewKey     = promptAndReadLine("Would you like to generate a new private key? (y/N): ");
 
   Serial.println();
