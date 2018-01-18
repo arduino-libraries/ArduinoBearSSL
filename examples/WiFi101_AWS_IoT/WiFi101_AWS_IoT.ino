@@ -1,13 +1,11 @@
 // This example uses an Arduino/Genuino Zero together with
-// a WiFi101 Shield or a MKR1000 to connect to shiftr.io.
+// a WiFi101 Shield or a MKR1000 to connect to AWS IOT.
 //
 // IMPORTANT: This example uses the new WiFi101 library.
 //
 // IMPORTANT: You need to install/update the SSL certificates first:
 // https://github.com/arduino-libraries/WiFi101-FirmwareUpdater#to-update-ssl-certificates
 //
-// You can check on your device after a successful
-// connection here: https://shiftr.io/try.
 //
 // by Gilberto Conti
 // https://github.com/256dpi/arduino-mqtt
@@ -16,10 +14,15 @@
 #include <MQTTClient.h>
 #include <ArduinoBearSSL.h>
 
+// ssid and pass are the wifi settings
 const char ssid[] = "ssid";
 const char pass[] = "pass";
 
+// server is the url of aws IOT
 const char server[] = "xxxxxxxxxxxxxx.iot.xx-xxxx-x.amazonaws.com";
+
+// id is the ThingName in aws IOT
+const char id[] = "XXX"
 
 // Get the cert data by:
 // 1) Creating a CSR using the ArduinoBearSSL -> Tools -> ECC508CSR example for key slot 0
@@ -65,15 +68,14 @@ void connect() {
   }
 
   Serial.print("\nconnecting...");
-  while (!client.connect("arduino")) {
+  while (!client.connect(id)) {
     Serial.print(".");
     delay(1000);
   }
 
   Serial.println("\nconnected!");
 
-  client.subscribe("/hello");
-  // client.unsubscribe("/hello");
+  client.subscribe("$aws/things/" + id + "/test");
 }
 
 void loop() {
@@ -86,7 +88,7 @@ void loop() {
   // publish a message roughly every second.
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
-    client.publish("/hello", "world");
+    client.publish("$aws/things/" + id + "/status", "hello world");
   }
 }
 
