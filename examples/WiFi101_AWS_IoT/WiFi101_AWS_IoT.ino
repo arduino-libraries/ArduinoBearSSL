@@ -13,6 +13,8 @@
 #include <WiFi101.h>
 #include <MQTTClient.h>
 #include <ArduinoBearSSL.h>
+#include <utility/ECC508.h>
+#include <utility/ECC508Cert.h>
 
 // ssid and pass are the wifi settings
 const char ssid[] = "XXX";
@@ -22,19 +24,16 @@ const char pass[] = "XXX";
 const char server[] = "xxxxxxxxxxxxxx.iot.xx-xxxx-x.amazonaws.com";
 
 // id is the ThingName in aws IOT
-const char id[] = "XXX"
+const String id = "XXX";
 
 // Get the cert data by:
 // 1) Creating a CSR using the ArduinoBearSSL -> Tools -> ECC508CSR example for key slot 0
-// 2) Creating a new thing and uploading the CSR for it
-// 3) Downloading the public key for the thing in AWS IoT
-// 4) Convert the base64 encoded cert to binary
-const byte cert[] = {
-// ...
-};
+// 2) Use the "Go tool" to generate a public cert from the CSR
+// 3) Store the cert params in 1)
+// 4) Activate the cert in AWS IoT and attach policy + thing
 
 WiFiClient wifiClient;
-BearSSLClient net(wifiClient, 0, cert, sizeof(cert));
+BearSSLClient net(wifiClient);
 MQTTClient client;
 
 unsigned long lastMillis = 0;
@@ -45,8 +44,37 @@ unsigned long getTime() {
 
 void setup() {
   Serial.begin(115200);
+  while (!Serial);
+
+  if (!ECC508.begin()) {
+    Serial.println("No ECC508 present!");
+    while (1);
+  }
 
   ArduinoBearSSL.onGetTime(getTime);
+
+  ECC508Cert.begin(0, 9, 10);
+  ECC508Cert.setIssuerCountryName("US");
+  ECC508Cert.setIssuerOrganizationName("Arduino LLC US");
+  ECC508Cert.setIssuerOrganizationalUnitName("IT");
+  ECC508Cert.setIssuerCommonName("Arduino");
+  ECC508Cert.setSubjectCommonName(ECC508.serialNumber());
+  ECC508Cert.uncompress();
+
+  const byte* certData = ECC508Cert.bytes();
+  int certLength = ECC508Cert.length();
+
+  for (int i = 0; i < certLength; i++) {
+    byte b = certData[i];
+
+    if (b < 16) {
+      Serial.print('0');
+    }
+    Serial.print(b, HEX);
+  }
+  Serial.println();
+
+  net.setEccSlot(0, ECC508Cert.bytes(), ECC508Cert.length());
   
   WiFi.begin(ssid, pass);
 
@@ -68,7 +96,7 @@ void connect() {
   }
 
   Serial.print("\nconnecting...");
-  while (!client.connect(id)) {
+  while (!client.connect(id.c_str())) {
     Serial.print(".");
     delay(1000);
   }
