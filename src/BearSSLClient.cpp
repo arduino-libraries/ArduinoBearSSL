@@ -41,15 +41,16 @@ int BearSSLClient::connect(const char* host, uint16_t port)
 
 size_t BearSSLClient::write(uint8_t b)
 {
+
   return write(&b, sizeof(b));
 }
 
 size_t BearSSLClient::write(const uint8_t *buf, size_t size)
 {
   br_sslio_write_all(&_ioc, buf, size);
-  br_sslio_flush(&_ioc);
+  int ret =  br_sslio_flush(&_ioc);
 
-  return size;
+  return ret<0?0:size;
 }
 
 int BearSSLClient::available()
@@ -289,5 +290,5 @@ int BearSSLClient::clientWrite(void *ctx, const unsigned char *buf, size_t len)
 
   int w = c->write(buf, len);
 
-  return w;
+  return w>0?w:-1;
 }
