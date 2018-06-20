@@ -41,7 +41,6 @@ int BearSSLClient::connect(const char* host, uint16_t port)
 
 size_t BearSSLClient::write(uint8_t b)
 {
-
   return write(&b, sizeof(b));
 }
 
