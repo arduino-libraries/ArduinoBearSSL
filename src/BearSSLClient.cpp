@@ -47,10 +47,24 @@ size_t BearSSLClient::write(uint8_t b)
 
 size_t BearSSLClient::write(const uint8_t *buf, size_t size)
 {
-  br_sslio_write_all(&_ioc, buf, size);
-  int ret =  br_sslio_flush(&_ioc);
+  size_t written = 0;
 
-  return ret<0?0:size;
+  while (written < size) {
+    int result = br_sslio_write(&_ioc, buf, size);
+
+	if (result < 0) {
+	  break;
+	}
+
+	buf += result;
+	written += result;
+  }
+
+  if (written == size && br_sslio_flush(&_ioc) < 0) {
+    return 0;
+  }
+
+  return written;
 }
 
 int BearSSLClient::available()
@@ -241,17 +255,16 @@ int BearSSLClient::clientRead(void *ctx, unsigned char *buf, size_t len)
     return -1;
   }
 
-  int r = c->read(buf, len);
-
-  if (r == -1) {
+  int result = c->read(buf, len);
+  if (result == -1) {
     return 0;
   }
 
 #ifdef DEBUGSERIAL
   DEBUGSERIAL.print("BearSSLClient::clientRead - ");
-  DEBUGSERIAL.print(r);
+  DEBUGSERIAL.print(result);
   DEBUGSERIAL.print(" - ");  
-  for (size_t i = 0; i < r; i++) {
+  for (size_t i = 0; i < result; i++) {
     byte b = buf[i];
 
     if (b < 16) {
@@ -262,7 +275,7 @@ int BearSSLClient::clientRead(void *ctx, unsigned char *buf, size_t len)
   DEBUGSERIAL.println();
 #endif
 
-  return r;
+  return result;
 }
 
 int BearSSLClient::clientWrite(void *ctx, const unsigned char *buf, size_t len)
@@ -288,7 +301,10 @@ int BearSSLClient::clientWrite(void *ctx, const unsigned char *buf, size_t len)
     return -1;
   }
 
-  int w = c->write(buf, len);
+  int result = c->write(buf, len);
+  if (result == 0) {
+    return -1;
+  }
 
-  return w>0?w:-1;
+  return result;
 }
