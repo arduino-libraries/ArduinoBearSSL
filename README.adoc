@@ -1,6 +1,8 @@
 = ArduinoBearSSL =
 
-Port of https://bearssl.org[BearSSL] to Arduino
+Port of https://bearssl.org[BearSSL] to Arduino.
+
+This library depends on ArduinoECCX08.
 
 For more information about this library please visit us at
 http://www.arduino.cc/en/Reference/ArduinoBearSSL
