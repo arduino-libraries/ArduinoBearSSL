@@ -1,0 +1,23 @@
+########################################
+# Syntax Coloring Map For ArduinoBearSSL
+########################################
+
+########################################
+# Datatypes (KEYWORD1)
+########################################
+
+ArduinoBearSSL	KEYWORD1
+BearSSLClient	KEYWORD1
+
+########################################
+# Methods and Functions (KEYWORD2)
+########################################
+
+getTime	KEYWORD2
+onGetTime	KEYWORD2
+
+setEccSlot	KEYWORD2
+
+########################################
+# Constants (LITERAL1)
+########################################
