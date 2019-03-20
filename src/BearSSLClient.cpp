@@ -254,6 +254,10 @@ int BearSSLClient::errorCode()
   return br_ssl_engine_last_error(&_sc.eng);
 }
 
+extern "C" void arduino_client_profile (br_ssl_client_context *cc,
+	br_x509_minimal_context *xc,
+	const br_x509_trust_anchor *trust_anchors, size_t trust_anchors_num);
+
 int BearSSLClient::connectSSL(const char* host)
 {
   // initialize client context with all algorithms and hardcoded trust anchors
