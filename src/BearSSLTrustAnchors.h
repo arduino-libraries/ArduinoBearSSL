@@ -32,6 +32,25 @@
 //
 //   brssl ta *.cer
 
+#define TAs_NUM   15
+
+#define TA_ADD_TRUST_EXTERNAL
+#define TA_AMAZON_ROOT_CA1
+#define TA_BALTIMORE_CYBER_TRUST
+#define TA_COMODO_RSA_CERTIFICATION_AUTHORITY
+#define TA_DIGICERT_ROOT
+#define TA_DST_ROOT_CA_X3
+#define TA_ENTRUST
+#define TA_EQUIFAX
+#define TA_GEOTRUST_GLOBAL_CA
+#define TA_GEOTRUST_PRIMARY_CERTIFICATION_AUTHORITY_G3
+#define TA_GLOBAL_SIGN
+#define TA_GODADDY_ROOT_CERTIFICATE_AUTHORITY_G2
+#define TA_ISRG_ROOT_X1
+#define TA_TRUSTID_SERVER_CA_A52
+#define TA_VERISIGN
+
+#ifdef TA_ADD_TRUST_EXTERNAL
 static const unsigned char TA0_DN[] = {
   0x30, 0x6F, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
   0x02, 0x53, 0x45, 0x31, 0x14, 0x30, 0x12, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -73,7 +92,9 @@ static const unsigned char TA0_RSA_N[] = {
 static const unsigned char TA0_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_AMAZON_ROOT_CA1
 static const unsigned char TA1_DN[] = {
   0x30, 0x39, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
   0x02, 0x55, 0x53, 0x31, 0x0F, 0x30, 0x0D, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -110,7 +131,9 @@ static const unsigned char TA1_RSA_N[] = {
 static const unsigned char TA1_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_BALTIMORE_CYBER_TRUST
 static const unsigned char TA2_DN[] = {
   0x30, 0x5A, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
   0x02, 0x49, 0x45, 0x31, 0x12, 0x30, 0x10, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -150,7 +173,9 @@ static const unsigned char TA2_RSA_N[] = {
 static const unsigned char TA2_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_COMODO_RSA_CERTIFICATION_AUTHORITY
 static const unsigned char TA3_DN[] = {
   0x30, 0x81, 0x85, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06,
   0x13, 0x02, 0x47, 0x42, 0x31, 0x1B, 0x30, 0x19, 0x06, 0x03, 0x55, 0x04,
@@ -215,7 +240,9 @@ static const unsigned char TA3_RSA_N[] = {
 static const unsigned char TA3_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_DIGICERT_ROOT
 static const unsigned char TA4_DN[] = {
   0x30, 0x3F, 0x31, 0x24, 0x30, 0x22, 0x06, 0x03, 0x55, 0x04, 0x0A, 0x13,
   0x1B, 0x44, 0x69, 0x67, 0x69, 0x74, 0x61, 0x6C, 0x20, 0x53, 0x69, 0x67,
@@ -253,7 +280,9 @@ static const unsigned char TA4_RSA_N[] = {
 static const unsigned char TA4_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_DST_ROOT_CA_X3
 static const unsigned char TA5_DN[] = {
   0x30, 0x6C, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
   0x02, 0x55, 0x53, 0x31, 0x15, 0x30, 0x13, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -295,7 +324,9 @@ static const unsigned char TA5_RSA_N[] = {
 static const unsigned char TA5_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_ENTRUST
 static const unsigned char TA6_DN[] = {
   0x30, 0x81, 0xB0, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06,
   0x13, 0x02, 0x55, 0x53, 0x31, 0x16, 0x30, 0x14, 0x06, 0x03, 0x55, 0x04,
@@ -342,7 +373,9 @@ static const unsigned char TA6_RSA_N[] = {
 static const unsigned char TA6_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_EQUIFAX
 static const unsigned char TA7_DN[] = {
   0x30, 0x4E, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
   0x02, 0x55, 0x53, 0x31, 0x10, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -370,7 +403,9 @@ static const unsigned char TA7_RSA_N[] = {
 static const unsigned char TA7_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_GEOTRUST_GLOBAL_CA
 static const unsigned char TA8_DN[] = {
   0x30, 0x42, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
   0x02, 0x55, 0x53, 0x31, 0x16, 0x30, 0x14, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -408,7 +443,9 @@ static const unsigned char TA8_RSA_N[] = {
 static const unsigned char TA8_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_GEOTRUST_PRIMARY_CERTIFICATION_AUTHORITY_G3
 static const unsigned char TA9_DN[] = {
   0x30, 0x81, 0x98, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06,
   0x13, 0x02, 0x55, 0x53, 0x31, 0x16, 0x30, 0x14, 0x06, 0x03, 0x55, 0x04,
@@ -453,7 +490,9 @@ static const unsigned char TA9_RSA_N[] = {
 static const unsigned char TA9_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_GLOBAL_SIGN
 static const unsigned char TA10_DN[] = {
   0x30, 0x4C, 0x31, 0x20, 0x30, 0x1E, 0x06, 0x03, 0x55, 0x04, 0x0B, 0x13,
   0x17, 0x47, 0x6C, 0x6F, 0x62, 0x61, 0x6C, 0x53, 0x69, 0x67, 0x6E, 0x20,
@@ -492,7 +531,9 @@ static const unsigned char TA10_RSA_N[] = {
 static const unsigned char TA10_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_GODADDY_ROOT_CERTIFICATE_AUTHORITY_G2
 static const unsigned char TA11_DN[] = {
   0x30, 0x81, 0x83, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06,
   0x13, 0x02, 0x55, 0x53, 0x31, 0x10, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x04,
@@ -536,7 +577,9 @@ static const unsigned char TA11_RSA_N[] = {
 static const unsigned char TA11_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_ISRG_ROOT_X1
 static const unsigned char TA12_DN[] = {
   0x30, 0x4F, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
   0x02, 0x55, 0x53, 0x31, 0x29, 0x30, 0x27, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -596,7 +639,9 @@ static const unsigned char TA12_RSA_N[] = {
 static const unsigned char TA12_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_TRUSTID_SERVER_CA_A52
 static const unsigned char TA13_DN[] = {
   0x30, 0x5A, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13,
   0x02, 0x55, 0x53, 0x31, 0x12, 0x30, 0x10, 0x06, 0x03, 0x55, 0x04, 0x0A,
@@ -636,7 +681,9 @@ static const unsigned char TA13_RSA_N[] = {
 static const unsigned char TA13_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
+#ifdef TA_VERISIGN
 static const unsigned char TA14_DN[] = {
   0x30, 0x81, 0xCA, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06,
   0x13, 0x02, 0x55, 0x53, 0x31, 0x17, 0x30, 0x15, 0x06, 0x03, 0x55, 0x04,
@@ -686,8 +733,10 @@ static const unsigned char TA14_RSA_N[] = {
 static const unsigned char TA14_RSA_E[] = {
   0x01, 0x00, 0x01
 };
+#endif
 
-static const br_x509_trust_anchor TAs[15] = {
+static const br_x509_trust_anchor TAs[] = {
+#ifdef TA_ADD_TRUST_EXTERNAL
   {
     { (unsigned char *)TA0_DN, sizeof TA0_DN },
     BR_X509_TA_CA,
@@ -699,6 +748,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_AMAZON_ROOT_CA1
   {
     { (unsigned char *)TA1_DN, sizeof TA1_DN },
     BR_X509_TA_CA,
@@ -710,6 +762,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_BALTIMORE_CYBER_TRUST
   {
     { (unsigned char *)TA2_DN, sizeof TA2_DN },
     BR_X509_TA_CA,
@@ -721,6 +776,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_COMODO_RSA_CERTIFICATION_AUTHORITY
   {
     { (unsigned char *)TA3_DN, sizeof TA3_DN },
     BR_X509_TA_CA,
@@ -732,6 +790,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_DIGICERT_ROOT
   {
     { (unsigned char *)TA4_DN, sizeof TA4_DN },
     BR_X509_TA_CA,
@@ -743,6 +804,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_DST_ROOT_CA_X3
   {
     { (unsigned char *)TA5_DN, sizeof TA5_DN },
     BR_X509_TA_CA,
@@ -754,6 +818,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_ENTRUST
   {
     { (unsigned char *)TA6_DN, sizeof TA6_DN },
     BR_X509_TA_CA,
@@ -765,6 +832,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_EQUIFAX
   {
     { (unsigned char *)TA7_DN, sizeof TA7_DN },
     BR_X509_TA_CA,
@@ -776,6 +846,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_GEOTRUST_GLOBAL_CA
   {
     { (unsigned char *)TA8_DN, sizeof TA8_DN },
     BR_X509_TA_CA,
@@ -787,6 +860,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_GEOTRUST_PRIMARY_CERTIFICATION_AUTHORITY_G3
   {
     { (unsigned char *)TA9_DN, sizeof TA9_DN },
     BR_X509_TA_CA,
@@ -798,6 +874,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_GLOBAL_SIGN
   {
     { (unsigned char *)TA10_DN, sizeof TA10_DN },
     BR_X509_TA_CA,
@@ -809,6 +888,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_GODADDY_ROOT_CERTIFICATE_AUTHORITY_G2
   {
     { (unsigned char *)TA11_DN, sizeof TA11_DN },
     BR_X509_TA_CA,
@@ -820,6 +902,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_ISRG_ROOT_X1
   {
     { (unsigned char *)TA12_DN, sizeof TA12_DN },
     BR_X509_TA_CA,
@@ -831,6 +916,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_TRUSTID_SERVER_CA_A52
   {
     { (unsigned char *)TA13_DN, sizeof TA13_DN },
     BR_X509_TA_CA,
@@ -842,6 +930,9 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   },
+#endif
+
+#ifdef TA_VERISIGN
   {
     { (unsigned char *)TA14_DN, sizeof TA14_DN },
     BR_X509_TA_CA,
@@ -853,8 +944,7 @@ static const br_x509_trust_anchor TAs[15] = {
       } }
     }
   }
+#endif
 };
-
-#define TAs_NUM   15
 
 #endif
