@@ -261,7 +261,11 @@ extern "C" void arduino_client_profile (br_ssl_client_context *cc,
 int BearSSLClient::connectSSL(const char* host)
 {
   // initialize client context with all algorithms and hardcoded trust anchors
-  br_ssl_client_init_full(&_sc, &_xc, _TAs, _numTAs);
+#if BEAR_SSL_CLIENT_OPTIMIZE_FOR_ARDUINO_CLOUD
+    arduino_client_profile(&_sc, &_xc, TAs, TAs_NUM);
+#else
+    br_ssl_client_init_full(&_sc, &_xc, TAs, TAs_NUM);
+#endif
 
   // set the buffer in split mode
   br_ssl_engine_set_buffer(&_sc.eng, _iobuf, sizeof(_iobuf), 1);

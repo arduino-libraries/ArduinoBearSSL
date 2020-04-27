@@ -34,6 +34,10 @@
 
 #include "bearssl/bearssl.h"
 
+#if BEAR_SSL_CLIENT_OPTIMIZE_FOR_ARDUINO_CLOUD
+extern "C" void arduino_client_profile (br_ssl_client_context *cc, br_x509_minimal_context *xc, const br_x509_trust_anchor *trust_anchors, size_t trust_anchors_num);
+#endif
+
 class BearSSLClient : public Client {
 
 public:
