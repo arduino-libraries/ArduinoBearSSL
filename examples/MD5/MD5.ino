@@ -1,5 +1,5 @@
 /*
-  ArduinoCrypto MD5
+  ArduinoBearSSL MD5
 
   This sketch demonstrates how to create a MD5 hash
   for an input string.
