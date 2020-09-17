@@ -46,6 +46,9 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _numTAs(myNumTAs),
   _noSNI(false)
 {
+  _ecVrfy = br_ecdsa_vrfy_asn1_get_default();
+  _ecSign = br_ecdsa_sign_asn1_get_default();
+
   _ecKey.curve = 0;
   _ecKey.x = NULL;
   _ecKey.xlen = 0;
@@ -192,6 +195,16 @@ void BearSSLClient::setInsecure(SNI insecure)
   }
 }
 
+void BearSSLClient::setEccVrfy(br_ecdsa_vrfy vrfy)
+{
+  _ecVrfy = vrfy;
+}
+
+void BearSSLClient::setEccSign(br_ecdsa_sign sign)
+{
+  _ecSign = sign;
+}
+
 void BearSSLClient::setEccSlot(int ecc508KeySlot, const byte cert[], int certLength)
 {
   // HACK: put the key slot info. in the br_ec_private_key structure
@@ -202,6 +215,9 @@ void BearSSLClient::setEccSlot(int ecc508KeySlot, const byte cert[], int certLen
   _ecCert.data = (unsigned char*)cert;
   _ecCert.data_len = certLength;
   _ecCertDynamic = false;
+
+  _ecVrfy = eccX08_vrfy_asn1;
+  _ecSign = eccX08_sign_asn1;
 }
 
 void BearSSLClient::setEccSlot(int ecc508KeySlot, const char cert[])
@@ -267,22 +283,22 @@ int BearSSLClient::connectSSL(const char* host)
   // inject entropy in engine
   unsigned char entropy[32];
 
-  if (ECCX08.begin() && ECCX08.locked() && ECCX08.random(entropy, sizeof(entropy))) {
-    // ECC508 random success, add custom ECDSA vfry and EC sign
-    br_ssl_engine_set_ecdsa(&_sc.eng, eccX08_vrfy_asn1);
-    br_x509_minimal_set_ecdsa(&_xc, br_ssl_engine_get_ec(&_sc.eng), br_ssl_engine_get_ecdsa(&_sc.eng));
-    
-    // enable client auth using the ECCX08
-    if (_ecCert.data_len && _ecKey.xlen) {
-      br_ssl_client_set_single_ec(&_sc, &_ecCert, 1, &_ecKey, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN, BR_KEYTYPE_EC, br_ec_get_default(), eccX08_sign_asn1);
-    }
-  } else {
+  if (!ECCX08.begin() || !ECCX08.locked() || !ECCX08.random(entropy, sizeof(entropy))) {
     // no ECCX08 or random failed, fallback to pseudo random
     for (size_t i = 0; i < sizeof(entropy); i++) {
       entropy[i] = random(0, 255);
     }
   }
   br_ssl_engine_inject_entropy(&_sc.eng, entropy, sizeof(entropy));
+
+  // add custom ECDSA vfry and EC sign
+  br_ssl_engine_set_ecdsa(&_sc.eng, _ecVrfy);
+  br_x509_minimal_set_ecdsa(&_xc, br_ssl_engine_get_ec(&_sc.eng), br_ssl_engine_get_ecdsa(&_sc.eng));
+
+  // enable client auth
+  if (_ecCert.data_len && _ecKey.xlen) {
+    br_ssl_client_set_single_ec(&_sc, &_ecCert, 1, &_ecKey, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN, BR_KEYTYPE_EC, br_ec_get_default(), _ecSign);
+  }
 
   // set the hostname used for SNI
   br_ssl_client_reset(&_sc, host, 0);

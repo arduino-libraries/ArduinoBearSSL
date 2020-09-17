@@ -71,6 +71,9 @@ public:
 
   void setInsecure(SNI insecure) __attribute__((deprecated("INSECURE. DO NOT USE IN PRODUCTION")));
 
+  void setEccVrfy(br_ecdsa_vrfy vrfy);
+  void setEccSign(br_ecdsa_sign sign);
+
   void setEccSlot(int ecc508KeySlot, const byte cert[], int certLength);
   void setEccSlot(int ecc508KeySlot, const char cert[]);
 
@@ -88,6 +91,9 @@ private:
   int _numTAs;
 
   bool _noSNI;
+
+  br_ecdsa_vrfy _ecVrfy;
+  br_ecdsa_sign _ecSign;
 
   br_ec_private_key _ecKey;
   br_x509_certificate _ecCert;
