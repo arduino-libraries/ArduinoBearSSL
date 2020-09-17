@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Arduino SA. All rights reserved.
+ * Copyright (c) 2019 Arduino SA. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining 
  * a copy of this software and associated documentation files (the
@@ -22,26 +22,31 @@
  * SOFTWARE.
  */
 
-#ifndef _ARDUINO_BEAR_SSL_H_
-#define _ARDUINO_BEAR_SSL_H_
+#ifndef MD5_H
+#define MD5_H
 
-#include "BearSSLClient.h"
-#include "SHA1.h"
-#include "SHA256.h"
-#include "MD5.h"
+#include <bearssl/bearssl_hash.h>
 
-class ArduinoBearSSLClass {
+#include "SHA.h"
+
+#define MD5_BLOCK_SIZE 64
+#define MD5_DIGEST_SIZE 16
+
+class MD5Class: public SHAClass {
+
 public:
-  ArduinoBearSSLClass();
-  virtual ~ArduinoBearSSLClass();
+  MD5Class();
+  virtual ~MD5Class();
 
-  unsigned long getTime();
-  void onGetTime(unsigned long(*)(void));
+protected:
+  virtual int begin();
+  virtual int update(const uint8_t *buffer, size_t size);
+  virtual int end(uint8_t *digest);
 
 private:
-  unsigned long (*_onGetTimeCallback)(void);
+  br_md5_context _ctx;
 };
 
-extern ArduinoBearSSLClass ArduinoBearSSL;
+extern MD5Class MD5;
 
 #endif
