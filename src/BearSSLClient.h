@@ -74,6 +74,8 @@ public:
   void setEccVrfy(br_ecdsa_vrfy vrfy);
   void setEccSign(br_ecdsa_sign sign);
 
+  void setEccCert(br_x509_certificate cert);
+
   void setEccSlot(int ecc508KeySlot, const byte cert[], int certLength);
   void setEccSlot(int ecc508KeySlot, const char cert[]);
 
