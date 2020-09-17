@@ -205,6 +205,11 @@ void BearSSLClient::setEccSign(br_ecdsa_sign sign)
   _ecSign = sign;
 }
 
+void BearSSLClient::setEccCert(br_x509_certificate cert)
+{
+  _ecCert = cert;
+}
+
 void BearSSLClient::setEccSlot(int ecc508KeySlot, const byte cert[], int certLength)
 {
   // HACK: put the key slot info. in the br_ec_private_key structure
