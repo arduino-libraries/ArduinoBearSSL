@@ -64,6 +64,11 @@ int SHAClass::endHash()
   }
 }
 
+int HashClass::runHash(uint8_t *_secret, size_t _secretLength, uint8_t *_digest)
+{
+  return run(_secret, _secretLength, _digest);
+}
+
 int SHAClass::beginHmac(const String& secret)
 {
   return beginHmac((const uint8_t*)secret.c_str(), secret.length());

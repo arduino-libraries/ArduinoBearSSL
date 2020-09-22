@@ -35,6 +35,7 @@ public:
 
   int beginHash();
   int endHash();
+  int runHash(uint8_t *_secret, size_t _secretLength, uint8_t *_digest);
 
   int beginHmac(const String& secret);
   int beginHmac(const char* secret);
@@ -58,6 +59,7 @@ protected:
   virtual int begin() = 0;
   virtual int update(const uint8_t *buffer, size_t size) = 0;
   virtual int end(uint8_t *digest) = 0;
+  virtual int run(uint8_t *input, size_t size, uint8_t *output) = 0;
 
 private:
   int _blockSize;
