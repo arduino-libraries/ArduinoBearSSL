@@ -54,4 +54,13 @@ int SHA1Class::end(uint8_t *digest)
   return 1;
 }
 
+int SHA1Class::run(uint8_t *input, size_t size, uint8_t *output)
+{
+  br_sha1_init(&_ctx);
+  br_sha1_update(&_ctx, input, size);
+  br_sha1_out(&_ctx, output);
+
+  return 1;
+}
+
 SHA1Class SHA1;

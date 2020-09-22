@@ -54,4 +54,13 @@ int MD5Class::end(uint8_t *digest)
   return 1;
 }
 
+int MD5Class::run(uint8_t *input, size_t size, uint8_t *output)
+{
+  br_md5_init(&_ctx);
+  br_md5_update(&_ctx, input, size);
+  br_md5_out(&_ctx, output);
+
+  return 1;
+}
+
 MD5Class MD5;

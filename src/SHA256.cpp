@@ -54,4 +54,13 @@ int SHA256Class::end(uint8_t *digest)
   return 1;
 }
 
+int SHA256Class::run(uint8_t *input, size_t size, uint8_t *output)
+{
+  br_sha256_init(&_ctx);
+  br_sha256_update(&_ctx, input, size);
+  br_sha256_out(&_ctx, output);
+
+  return 1;
+}
+
 SHA256Class SHA256;

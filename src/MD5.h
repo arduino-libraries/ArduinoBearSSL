@@ -42,6 +42,7 @@ protected:
   virtual int begin();
   virtual int update(const uint8_t *buffer, size_t size);
   virtual int end(uint8_t *digest);
+  virtual int run(uint8_t *input, size_t size, uint8_t *output);
 
 private:
   br_md5_context _ctx;
