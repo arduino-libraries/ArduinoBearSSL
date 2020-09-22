@@ -64,7 +64,7 @@ int SHAClass::endHash()
   }
 }
 
-int HashClass::runHash(uint8_t *_secret, size_t _secretLength, uint8_t *_digest)
+int SHAClass::runHash(uint8_t *_secret, size_t _secretLength, uint8_t *_digest)
 {
   return run(_secret, _secretLength, _digest);
 }
