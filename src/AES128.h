@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Arduino SA. All rights reserved.
+ * Copyright (c) 2019 Arduino SA. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining 
  * a copy of this software and associated documentation files (the
@@ -22,28 +22,31 @@
  * SOFTWARE.
  */
 
-#ifndef _ARDUINO_BEAR_SSL_H_
-#define _ARDUINO_BEAR_SSL_H_
+#ifndef AES128_H
+#define AES128_H
 
-#include "BearSSLClient.h"
-#include "SHA1.h"
-#include "SHA256.h"
-#include "MD5.h"
-#include "AES128.h"
-#include "DES.h"
+#include <bearssl/bearssl_block.h>
 
-class ArduinoBearSSLClass {
+#include "Encryption.h"
+
+#define AES128_BLOCK_SIZE 16
+#define AES128_DIGEST_SIZE 16
+
+class AES128Class: public EncryptionClass {
+
 public:
-  ArduinoBearSSLClass();
-  virtual ~ArduinoBearSSLClass();
+  AES128Class();
+  virtual ~AES128Class();
 
-  unsigned long getTime();
-  void onGetTime(unsigned long(*)(void));
+protected:
+  virtual int runEncryption(uint8_t *key, size_t size, uint8_t *input, size_t block_size, uint8_t *iv);
+  virtual int runDecryption(uint8_t *key, size_t size, uint8_t *input, size_t block_size, uint8_t *iv);
 
 private:
-  unsigned long (*_onGetTimeCallback)(void);
+  br_aes_ct_cbcenc_keys cbcenc_ctx;
+  br_aes_ct_cbcdec_keys cbcdec_ctx;
 };
 
-extern ArduinoBearSSLClass ArduinoBearSSL;
+extern AES128Class AES128;
 
 #endif

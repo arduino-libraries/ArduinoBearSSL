@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Arduino SA. All rights reserved.
+ * Copyright (c) 2019 Arduino SA. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining 
  * a copy of this software and associated documentation files (the
@@ -22,28 +22,34 @@
  * SOFTWARE.
  */
 
-#ifndef _ARDUINO_BEAR_SSL_H_
-#define _ARDUINO_BEAR_SSL_H_
+#ifndef ENCRYPTION_H
+#define ENCRYPTION_H
 
-#include "BearSSLClient.h"
-#include "SHA1.h"
-#include "SHA256.h"
-#include "MD5.h"
-#include "AES128.h"
-#include "DES.h"
+#include <Arduino.h>
 
-class ArduinoBearSSLClass {
+class EncryptionClass {
+
 public:
-  ArduinoBearSSLClass();
-  virtual ~ArduinoBearSSLClass();
+  EncryptionClass(int blockSize, int digestSize);
+  virtual ~EncryptionClass();
 
-  unsigned long getTime();
-  void onGetTime(unsigned long(*)(void));
+  int runEnc(uint8_t *_secret, size_t _secretLength, uint8_t *_data, size_t _dataLength, uint8_t *_ivector);
+  int runDec(uint8_t *_secret, size_t _secretLength, uint8_t *_data, size_t _dataLength, uint8_t *_ivector);
+
+protected:
+  virtual int runEncryption(uint8_t *key, size_t size, uint8_t *input, size_t block_size, uint8_t *iv) = 0;
+  virtual int runDecryption(uint8_t *key, size_t size, uint8_t *input, size_t block_size, uint8_t *iv) = 0;
 
 private:
-  unsigned long (*_onGetTimeCallback)(void);
-};
+  int _blockSize;
+  int _digestSize;
 
-extern ArduinoBearSSLClass ArduinoBearSSL;
+  uint8_t* _secret;
+  int _secretLength;
+  uint8_t* _ivector;
+  int _ivectorLength;
+  uint8_t* _data;
+  int _dataLength;
+};
 
 #endif
