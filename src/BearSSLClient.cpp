@@ -301,7 +301,7 @@ int BearSSLClient::connectSSL(const char* host)
   br_x509_minimal_set_ecdsa(&_xc, br_ssl_engine_get_ec(&_sc.eng), br_ssl_engine_get_ecdsa(&_sc.eng));
 
   // enable client auth
-  if (_ecCert.data_len && _ecKey.xlen) {
+  if (_ecCert.data_len) {
     br_ssl_client_set_single_ec(&_sc, &_ecCert, 1, &_ecKey, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN, BR_KEYTYPE_EC, br_ec_get_default(), _ecSign);
   }
 
