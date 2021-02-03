@@ -33,6 +33,10 @@
 #define BEAR_SSL_CLIENT_IBUF_SIZE 8192 + 85 + 325 - BEAR_SSL_CLIENT_OBUF_SIZE
 #endif
 
+#ifndef BEAR_SSL_CLIENT_CHAIN_SIZE
+#define BEAR_SSL_CLIENT_CHAIN_SIZE 3
+#endif
+
 #include <Arduino.h>
 #include <Client.h>
 
@@ -75,6 +79,7 @@ public:
   void setEccSign(br_ecdsa_sign sign);
 
   void setEccCert(br_x509_certificate cert);
+  void setEccChain(br_x509_certificate* chain, size_t chainLen);
 
   void setEccSlot(int ecc508KeySlot, const byte cert[], int certLength);
   void setEccSlot(int ecc508KeySlot, const char cert[]);
@@ -98,7 +103,8 @@ private:
   br_ecdsa_sign _ecSign;
 
   br_ec_private_key _ecKey;
-  br_x509_certificate _ecCert;
+  br_x509_certificate _ecCert[BEAR_SSL_CLIENT_CHAIN_SIZE];
+  int _ecChainLen;
   bool _ecCertDynamic;
 
   br_ssl_client_context _sc;
