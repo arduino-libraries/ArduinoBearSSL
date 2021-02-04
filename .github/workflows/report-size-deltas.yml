@@ -1,9 +1,17 @@
 name: Report Size Deltas
 
+# See: https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows
 on:
+  push:
+    paths:
+      - ".github/workflows/report-size-deltas.yml"
   schedule:
-    # schedule action for every five minutes (ends up being a little longer in practice)
+    # Run at the minimum interval allowed by GitHub Actions.
+    # Note: GitHub Actions periodically has outages which result in workflow failures.
+    # In this event, the workflows will start passing again once the service recovers.
     - cron: "*/5 * * * *"
+  workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   report:
