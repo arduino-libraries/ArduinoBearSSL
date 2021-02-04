@@ -29,7 +29,9 @@ jobs:
         - source-path: ./
         - name: ArduinoECCX08
       # sketch paths to compile (recursive) for all boards
-      UNIVERSAL_SKETCH_PATHS: '"examples/SHA1" "examples/SHA256"'
+      UNIVERSAL_SKETCH_PATHS: |
+        - examples/SHA1
+        - examples/SHA256
       SKETCHES_REPORTS_PATH: sketches-reports
 
     strategy:
@@ -51,13 +53,15 @@ jobs:
               type: wifi101
             libraries: |
               - name: WiFi101
-            sketch-paths: '"examples/WiFiSSLClient"'
+            sketch-paths: |
+              - examples/WiFiSSLClient
           # GSM boards
           - board:
               type: gsm
             libraries: |
               - name: MKRGSM
-            sketch-paths: '"examples/MKRGSMSSLClient"'
+            sketch-paths: |
+              - examples/MKRGSMSSLClient
 
     steps:
       - name: Checkout
@@ -70,10 +74,11 @@ jobs:
           libraries: |
             ${{ env.UNIVERSAL_LIBRARIES }}
             ${{ matrix.libraries }}
-          sketch-paths: ${{ env.UNIVERSAL_SKETCH_PATHS }} ${{ matrix.sketch-paths }}
-          size-report-sketch: SHA256
-          enable-size-deltas-report: true
+          sketch-paths: |
+            ${{ env.UNIVERSAL_SKETCH_PATHS }}
+            ${{ matrix.sketch-paths }}
           verbose: true
+          enable-deltas-report: true
           sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
 
       - name: Save sketches report as artifact
