@@ -30,6 +30,7 @@ jobs:
         - name: ArduinoECCX08
       # sketch paths to compile (recursive) for all boards
       UNIVERSAL_SKETCH_PATHS: '"examples/SHA1" "examples/SHA256"'
+      SKETCHES_REPORTS_PATH: sketches-reports
 
     strategy:
       fail-fast: false
@@ -63,7 +64,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Compile examples
-        uses: per1234/actions/libraries/compile-examples@beaac5ae4bb7ab294f1305e436172fde4c281fc8
+        uses: arduino/compile-sketches@main
         with:
           fqbn: ${{ matrix.board.fqbn }}
           libraries: |
@@ -73,10 +74,11 @@ jobs:
           size-report-sketch: SHA256
           enable-size-deltas-report: true
           verbose: true
+          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
 
       - name: Save sketches report as artifact
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v2
         with:
-          name: size-deltas-reports
-          path: size-deltas-reports
+          path: ${{ env.SKETCHES_REPORTS_PATH }}
+          name: ${{ env.SKETCHES_REPORTS_PATH }}
