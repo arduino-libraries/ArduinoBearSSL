@@ -47,8 +47,8 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _noSNI(false),
   _ecChainLen(0)
 {
-  _ecVrfy = br_ecdsa_vrfy_asn1_get_default();
-  _ecSign = br_ecdsa_sign_asn1_get_default();
+  _ecVrfy = eccX08_vrfy_asn1;
+  _ecSign = eccX08_sign_asn1;
 
   _ecKey.curve = 0;
   _ecKey.x = NULL;
