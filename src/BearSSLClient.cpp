@@ -290,6 +290,53 @@ void BearSSLClient::setEccSlot(int ecc508KeySlot, const char cert[])
   }
 }
 
+void BearSSLClient::setEccCertParent(const char cert[])
+{
+  // try to decode the cert
+  br_pem_decoder_context pemDecoder;
+
+  size_t certLen = strlen(cert);
+
+  // free old data
+  if (_ecCertDynamic && _ecCert[1].data) {
+    free(_ecCert[1].data);
+    _ecCert[1].data = NULL;
+  }
+
+  // assume the decoded cert is 3/4 the length of the input
+  _ecCert[1].data = (unsigned char*)malloc(((certLen * 3) + 3) / 4);
+  _ecCert[1].data_len = 0;
+  _ecChainLen = 2;
+
+  br_pem_decoder_init(&pemDecoder);
+
+  while (certLen) {
+    size_t len = br_pem_decoder_push(&pemDecoder, cert, certLen);
+
+    cert += len;
+    certLen -= len;
+
+    switch (br_pem_decoder_event(&pemDecoder)) {
+      case BR_PEM_BEGIN_OBJ:
+        br_pem_decoder_setdest(&pemDecoder, BearSSLClient::parentAppendCert, this);
+        break;
+
+      case BR_PEM_END_OBJ:
+        if (_ecCert[1].data_len) {
+          // done
+          _ecCertDynamic = true;
+          return;
+        }
+        break;
+
+      case BR_PEM_ERROR:
+        // failure
+        free(_ecCert[1].data);
+        return;
+    }
+  }
+}
+
 int BearSSLClient::errorCode()
 {
   return br_ssl_engine_last_error(&_sc.eng);
@@ -421,3 +468,12 @@ void BearSSLClient::clientAppendCert(void *ctx, const void *data, size_t len)
   memcpy(&c->_ecCert[0].data[c->_ecCert[0].data_len], data, len);
   c->_ecCert[0].data_len += len;
 }
+
+void BearSSLClient::parentAppendCert(void *ctx, const void *data, size_t len)
+{
+  BearSSLClient* c = (BearSSLClient*)ctx;
+
+  memcpy(&c->_ecCert[1].data[c->_ecCert[1].data_len], data, len);
+  c->_ecCert[1].data_len += len;
+}
+
