@@ -83,6 +83,7 @@ public:
 
   void setEccSlot(int ecc508KeySlot, const byte cert[], int certLength);
   void setEccSlot(int ecc508KeySlot, const char cert[]);
+  void setEccCertParent(const char cert[]);
 
   int errorCode();
 
@@ -91,6 +92,7 @@ private:
   static int clientRead(void *ctx, unsigned char *buf, size_t len);
   static int clientWrite(void *ctx, const unsigned char *buf, size_t len);
   static void clientAppendCert(void *ctx, const void *data, size_t len);
+  static void parentAppendCert(void *ctx, const void *data, size_t len);
 
 private:
   Client* _client;
