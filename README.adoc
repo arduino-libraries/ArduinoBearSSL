@@ -8,7 +8,9 @@ image:https://github.com/{repository-owner}/{repository-name}/workflows/Spell%20
 
 Port of https://bearssl.org[BearSSL] to Arduino.
 
-This library depends on ArduinoECCX08.
+This library depends on ArduinoECCX08. This dependency could be
+disabled by defining ARDUINO_DISABLE_ECCX08 in ArduinoBearSSLConfig.h
+(see examples).
 
 == License ==
 

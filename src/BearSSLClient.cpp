@@ -22,9 +22,12 @@
  * SOFTWARE.
  */
 
-#include <ArduinoECCX08.h>
-
 #include "ArduinoBearSSL.h"
+
+#ifndef ARDUINO_DISABLE_ECCX08
+#include <ArduinoECCX08.h>
+#endif
+
 #include "BearSSLTrustAnchors.h"
 #include "utility/eccX08_asn1.h"
 
@@ -47,8 +50,13 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _noSNI(false),
   _ecChainLen(0)
 {
+#ifndef ARDUINO_DISABLE_ECCX08
   _ecVrfy = eccX08_vrfy_asn1;
   _ecSign = eccX08_sign_asn1;
+#else
+  _ecVrfy = br_ecdsa_vrfy_asn1_get_default();
+  _ecSign = br_ecdsa_sign_asn1_get_default();
+#endif
 
   _ecKey.curve = 0;
   _ecKey.x = NULL;
@@ -237,8 +245,13 @@ void BearSSLClient::setEccSlot(int ecc508KeySlot, const byte cert[], int certLen
   _ecChainLen = 1;
   _ecCertDynamic = false;
 
+#ifndef ARDUINO_DISABLE_ECCX08
   _ecVrfy = eccX08_vrfy_asn1;
   _ecSign = eccX08_sign_asn1;
+#else
+  _ecVrfy = br_ecdsa_vrfy_asn1_get_default();
+  _ecSign = br_ecdsa_sign_asn1_get_default();
+#endif
 }
 
 void BearSSLClient::setEccSlot(int ecc508KeySlot, const char cert[])
@@ -352,12 +365,16 @@ int BearSSLClient::connectSSL(const char* host)
   // inject entropy in engine
   unsigned char entropy[32];
 
+#ifndef ARDUINO_DISABLE_ECCX08
   if (!ECCX08.begin() || !ECCX08.locked() || !ECCX08.random(entropy, sizeof(entropy))) {
+#endif
     // no ECCX08 or random failed, fallback to pseudo random
     for (size_t i = 0; i < sizeof(entropy); i++) {
       entropy[i] = random(0, 255);
     }
+#ifndef ARDUINO_DISABLE_ECCX08
   }
+#endif
   br_ssl_engine_inject_entropy(&_sc.eng, entropy, sizeof(entropy));
 
   // add custom ECDSA vfry and EC sign
