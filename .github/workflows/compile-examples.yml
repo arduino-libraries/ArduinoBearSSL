@@ -89,5 +89,6 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v2
         with:
+          if-no-files-found: error
           path: ${{ env.SKETCHES_REPORTS_PATH }}
           name: ${{ env.SKETCHES_REPORTS_PATH }}
