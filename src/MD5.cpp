@@ -54,4 +54,6 @@ int MD5Class::end(uint8_t *digest)
   return 1;
 }
 
+#ifndef ARDUINO_ARCH_MEGAAVR
 MD5Class MD5;
+#endif

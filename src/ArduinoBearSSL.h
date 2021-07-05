@@ -33,10 +33,6 @@
 
 #include "BearSSLClient.h"
 #include "SHA1.h"
-#include "SHA256.h"
-#include "MD5.h"
-#include "AES128.h"
-#include "DES.h"
 
 class ArduinoBearSSLClass {
 public:

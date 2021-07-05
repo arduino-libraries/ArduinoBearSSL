@@ -49,4 +49,6 @@ int AES128Class::runDecryption(uint8_t *key, size_t size, uint8_t *input, size_t
   return 1;
 }
 
+#ifndef ARDUINO_ARCH_MEGAAVR
 AES128Class AES128;
+#endif

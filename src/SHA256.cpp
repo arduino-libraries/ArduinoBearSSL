@@ -54,4 +54,6 @@ int SHA256Class::end(uint8_t *digest)
   return 1;
 }
 
+#ifndef ARDUINO_ARCH_MEGAAVR
 SHA256Class SHA256;
+#endif
