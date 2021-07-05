@@ -8,6 +8,12 @@
 */
 
 #include <ArduinoBearSSL.h>
+#include "SHA256.h"
+
+#ifdef ARDUINO_ARCH_MEGAAVR
+// Create the object
+SHA256Class SHA256;
+#endif
 
 void setup() {
   Serial.begin(9600);
