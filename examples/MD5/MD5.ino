@@ -8,6 +8,12 @@
 */
 
 #include <ArduinoBearSSL.h>
+#include "MD5.h"
+
+#ifdef ARDUINO_ARCH_MEGAAVR
+// Create the object
+MD5Class MD5;
+#endif
 
 void setup() {
   Serial.begin(9600);
