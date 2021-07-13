@@ -17,6 +17,7 @@ getTime	KEYWORD2
 onGetTime	KEYWORD2
 
 setEccSlot	KEYWORD2
+setKey	KEYWORD2
 errorCode	KEYWORD2
 
 ########################################
