@@ -48,6 +48,7 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _TAs(myTAs),
   _numTAs(myNumTAs),
   _noSNI(false),
+  _skeyDecoder(NULL),
   _ecChainLen(0)
 {
 #ifndef ARDUINO_DISABLE_ECCX08
@@ -74,6 +75,11 @@ BearSSLClient::~BearSSLClient()
   if (_ecCertDynamic && _ecCert[0].data) {
     free(_ecCert[0].data);
     _ecCert[0].data = NULL;
+  }
+
+  if (_skeyDecoder) {
+    free(_skeyDecoder);
+    _skeyDecoder = NULL;
   }
 }
 
@@ -303,6 +309,79 @@ void BearSSLClient::setEccSlot(int ecc508KeySlot, const char cert[])
   }
 }
 
+void BearSSLClient::setKey(const char key[], const char cert[])
+{
+  // try to decode the key and cert
+  br_pem_decoder_context pemDecoder;
+
+  size_t keyLen = strlen(key);
+  size_t certLen = strlen(cert);
+
+  br_pem_decoder_init(&pemDecoder);
+
+  if (_skeyDecoder == NULL) {
+    _skeyDecoder = (br_skey_decoder_context*)malloc(sizeof(br_skey_decoder_context));
+  }
+
+  br_skey_decoder_init(_skeyDecoder);
+
+  while (keyLen) {
+    size_t len = br_pem_decoder_push(&pemDecoder, key, keyLen);
+
+    key += len;
+    keyLen -= len;
+
+    switch (br_pem_decoder_event(&pemDecoder)) {
+      case BR_PEM_BEGIN_OBJ:
+        br_pem_decoder_setdest(&pemDecoder, BearSSLClient::clientAppendKey, this);
+        break;
+
+      case BR_PEM_END_OBJ:
+        if (br_skey_decoder_last_error(_skeyDecoder) != 0) {
+          return;
+        }
+        break;
+
+      case BR_PEM_ERROR:
+        return;
+    }
+  }
+
+  // assume the decoded cert is 3/4 the length of the input
+  _ecCert[0].data = (unsigned char*)malloc(((certLen * 3) + 3) / 4);
+  _ecCert[0].data_len = 0;
+  _ecChainLen = 1;
+
+  br_pem_decoder_init(&pemDecoder);
+
+  while (certLen) {
+    size_t len = br_pem_decoder_push(&pemDecoder, cert, certLen);
+
+    cert += len;
+    certLen -= len;
+
+    switch (br_pem_decoder_event(&pemDecoder)) {
+      case BR_PEM_BEGIN_OBJ:
+        br_pem_decoder_setdest(&pemDecoder, BearSSLClient::clientAppendCert, this);
+        break;
+
+      case BR_PEM_END_OBJ:
+        if (_ecCert[0].data_len) {
+          // done
+          _ecCertDynamic = true;
+          return;
+        }
+        break;
+
+      case BR_PEM_ERROR:
+        // failure
+        free(_ecCert[0].data);
+        _ecCert[0].data = NULL;
+        return;
+    }
+  }
+}
+
 void BearSSLClient::setEccCertParent(const char cert[])
 {
   // try to decode the cert
@@ -383,7 +462,17 @@ int BearSSLClient::connectSSL(const char* host)
 
   // enable client auth
   if (_ecCert[0].data_len) {
-    br_ssl_client_set_single_ec(&_sc, _ecCert, _ecChainLen, &_ecKey, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN, BR_KEYTYPE_EC, br_ec_get_default(), _ecSign);
+    if (_skeyDecoder) {
+      int skeyType = br_skey_decoder_key_type(_skeyDecoder);
+
+      if (skeyType == BR_KEYTYPE_EC) {
+        br_ssl_client_set_single_ec(&_sc, _ecCert, _ecChainLen, br_skey_decoder_get_ec(_skeyDecoder), BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN, BR_KEYTYPE_EC, br_ec_get_default(), br_ecdsa_sign_asn1_get_default());
+      } else if (skeyType == BR_KEYTYPE_RSA) {
+        br_ssl_client_set_single_rsa(&_sc, _ecCert, _ecChainLen, br_skey_decoder_get_rsa(_skeyDecoder), br_rsa_pkcs1_sign_get_default());
+      }
+    } else {
+      br_ssl_client_set_single_ec(&_sc, _ecCert, _ecChainLen, &_ecKey, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN, BR_KEYTYPE_EC, br_ec_get_default(), _ecSign);
+    }
   }
 
   // set the hostname used for SNI
@@ -484,6 +573,13 @@ void BearSSLClient::clientAppendCert(void *ctx, const void *data, size_t len)
 
   memcpy(&c->_ecCert[0].data[c->_ecCert[0].data_len], data, len);
   c->_ecCert[0].data_len += len;
+}
+
+void BearSSLClient::clientAppendKey(void *ctx, const void *data, size_t len)
+{
+  BearSSLClient* c = (BearSSLClient*)ctx;
+
+  br_skey_decoder_push(c->_skeyDecoder, data, len);
 }
 
 void BearSSLClient::parentAppendCert(void *ctx, const void *data, size_t len)
