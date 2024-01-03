@@ -64,9 +64,8 @@ public:
   BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, int myNumTAs);
   virtual ~BearSSLClient();
 
-
   inline void setClient(Client& client) { _client = &client; }
-
+  inline void setProfile(void(*client_init_function)(br_ssl_client_context *cc, br_x509_minimal_context *xc, const br_x509_trust_anchor *trust_anchors, size_t trustrust_anchorst_anchors_num)) { _br_ssl_client_init_function = client_init_function; }
 
   virtual int connect(IPAddress ip, uint16_t port);
   virtual int connect(const char* host, uint16_t port);
@@ -131,6 +130,8 @@ private:
   unsigned char _ibuf[BEAR_SSL_CLIENT_IBUF_SIZE];
   unsigned char _obuf[BEAR_SSL_CLIENT_OBUF_SIZE];
   br_sslio_context _ioc;
+
+  void (*_br_ssl_client_init_function)(br_ssl_client_context *cc, br_x509_minimal_context *xc, const br_x509_trust_anchor *trust_anchors, size_t trust_anchors_num);
 };
 
 #endif
