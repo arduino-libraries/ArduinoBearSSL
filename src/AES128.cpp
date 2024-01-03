@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include <ArduinoBearSSL.h>
 #include "AES128.h"
 
 AES128Class::AES128Class() :
@@ -49,6 +50,6 @@ int AES128Class::runDecryption(uint8_t *key, size_t size, uint8_t *input, size_t
   return 1;
 }
 
-#ifndef ARDUINO_ARCH_MEGAAVR
+#if !defined(ARDUINO_BEARSSL_DISABLE_AES128) && !defined(ARDUINO_ARCH_MEGAAVR)
 AES128Class AES128;
 #endif

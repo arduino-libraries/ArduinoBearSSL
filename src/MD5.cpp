@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include <ArduinoBearSSL.h>
 #include "MD5.h"
 
 MD5Class::MD5Class() :
@@ -54,6 +55,6 @@ int MD5Class::end(uint8_t *digest)
   return 1;
 }
 
-#ifndef ARDUINO_ARCH_MEGAAVR
+#if !defined(ARDUINO_BEARSSL_DISABLE_MD5) && !defined(ARDUINO_ARCH_MEGAAVR)
 MD5Class MD5;
 #endif
