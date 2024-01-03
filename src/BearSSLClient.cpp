@@ -54,7 +54,11 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _noSNI(false),
   _skeyDecoder(NULL),
   _ecChainLen(0),
+#ifndef ARDUINO_BEARSSL_DISABLE_FULL_CLIENT_PROFILE
   _br_ssl_client_init_function(br_ssl_client_init_full)
+#else
+  _br_ssl_client_init_function(NULL)
+#endif
 {
 #ifndef ARDUINO_DISABLE_ECCX08
   _ecVrfy = eccX08_vrfy_asn1;
