@@ -96,7 +96,9 @@ public:
 
   void setEccSlot(int ecc508KeySlot, const byte cert[], int certLength);
   void setEccSlot(int ecc508KeySlot, const char cert[]);
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   void setKey(const char key[], const char cert[]);
+#endif
   void setEccCertParent(const char cert[]);
 
   int errorCode();
@@ -106,7 +108,9 @@ private:
   static int clientRead(void *ctx, unsigned char *buf, size_t len);
   static int clientWrite(void *ctx, const unsigned char *buf, size_t len);
   static void clientAppendCert(void *ctx, const void *data, size_t len);
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   static void clientAppendKey(void *ctx, const void *data, size_t len);
+#endif
   static void parentAppendCert(void *ctx, const void *data, size_t len);
 
 private:
@@ -120,7 +124,9 @@ private:
   br_ecdsa_sign _ecSign;
 
   br_ec_private_key _ecKey;
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   br_skey_decoder_context* _skeyDecoder;
+#endif
   br_x509_certificate _ecCert[BEAR_SSL_CLIENT_CHAIN_SIZE];
   int _ecChainLen;
   bool _ecCertDynamic;

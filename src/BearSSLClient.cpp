@@ -52,7 +52,9 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _TAs(myTAs),
   _numTAs(myNumTAs),
   _noSNI(false),
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   _skeyDecoder(NULL),
+#endif
   _ecChainLen(0),
 #ifndef ARDUINO_BEARSSL_DISABLE_FULL_CLIENT_PROFILE
   _br_ssl_client_init_function(br_ssl_client_init_full)
@@ -86,10 +88,12 @@ BearSSLClient::~BearSSLClient()
     _ecCert[0].data = NULL;
   }
 
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   if (_skeyDecoder) {
     free(_skeyDecoder);
     _skeyDecoder = NULL;
   }
+#endif
 }
 
 int BearSSLClient::connect(IPAddress ip, uint16_t port)
@@ -318,6 +322,7 @@ void BearSSLClient::setEccSlot(int ecc508KeySlot, const char cert[])
   }
 }
 
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
 void BearSSLClient::setKey(const char key[], const char cert[])
 {
   // try to decode the key and cert
@@ -390,6 +395,7 @@ void BearSSLClient::setKey(const char key[], const char cert[])
     }
   }
 }
+#endif
 
 void BearSSLClient::setEccCertParent(const char cert[])
 {
@@ -475,6 +481,7 @@ int BearSSLClient::connectSSL(const char* host)
 
   // enable client auth
   if (_ecCert[0].data_len) {
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
     if (_skeyDecoder) {
       int skeyType = br_skey_decoder_key_type(_skeyDecoder);
 
@@ -484,8 +491,11 @@ int BearSSLClient::connectSSL(const char* host)
         br_ssl_client_set_single_rsa(&_sc, _ecCert, _ecChainLen, br_skey_decoder_get_rsa(_skeyDecoder), br_rsa_pkcs1_sign_get_default());
       }
     } else {
+#endif
       br_ssl_client_set_single_ec(&_sc, _ecCert, _ecChainLen, &_ecKey, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN, BR_KEYTYPE_EC, br_ec_get_default(), _ecSign);
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
     }
+#endif
   }
 
   // set the hostname used for SNI
@@ -588,12 +598,14 @@ void BearSSLClient::clientAppendCert(void *ctx, const void *data, size_t len)
   c->_ecCert[0].data_len += len;
 }
 
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
 void BearSSLClient::clientAppendKey(void *ctx, const void *data, size_t len)
 {
   BearSSLClient* c = (BearSSLClient*)ctx;
 
   br_skey_decoder_push(c->_skeyDecoder, data, len);
 }
+#endif
 
 void BearSSLClient::parentAppendCert(void *ctx, const void *data, size_t len)
 {
