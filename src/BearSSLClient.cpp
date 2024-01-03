@@ -28,15 +28,19 @@
 #include <ArduinoECCX08.h>
 #endif
 
+#ifndef ARDUINO_BEARSSL_DISABLE_BUILTIN_TRUST_ANCHORS
 #include "BearSSLTrustAnchors.h"
+#endif
 #include "utility/eccX08_asn1.h"
 
 #include "BearSSLClient.h"
 
+#ifndef ARDUINO_BEARSSL_DISABLE_BUILTIN_TRUST_ANCHORS
 BearSSLClient::BearSSLClient(Client& client) :
   BearSSLClient(&client, TAs, TAs_NUM)
 {
 }
+#endif
 
 BearSSLClient::BearSSLClient(Client& client, const br_x509_trust_anchor* myTAs, int myNumTAs)
 : BearSSLClient(&client, myTAs, myNumTAs)
@@ -49,7 +53,8 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _numTAs(myNumTAs),
   _noSNI(false),
   _skeyDecoder(NULL),
-  _ecChainLen(0)
+  _ecChainLen(0),
+  _br_ssl_client_init_function(br_ssl_client_init_full)
 {
 #ifndef ARDUINO_DISABLE_ECCX08
   _ecVrfy = eccX08_vrfy_asn1;
@@ -436,8 +441,12 @@ int BearSSLClient::errorCode()
 
 int BearSSLClient::connectSSL(const char* host)
 {
-  // initialize client context with all algorithms and hardcoded trust anchors
-  br_ssl_client_init_full(&_sc, &_xc, _TAs, _numTAs);
+  if (!_br_ssl_client_init_function) {
+    return 0;
+  }
+
+  // initialize client context with enabled algorithms and trust anchors
+  _br_ssl_client_init_function(&_sc, &_xc, _TAs, _numTAs);
 
   br_ssl_engine_set_buffers_bidi(&_sc.eng, _ibuf, sizeof(_ibuf), _obuf, sizeof(_obuf));
 
