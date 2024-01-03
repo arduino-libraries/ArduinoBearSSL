@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include <ArduinoBearSSL.h>
 #include "SHA256.h"
 
 SHA256Class::SHA256Class() :
@@ -54,6 +55,6 @@ int SHA256Class::end(uint8_t *digest)
   return 1;
 }
 
-#ifndef ARDUINO_ARCH_MEGAAVR
+#if !defined(ARDUINO_BEARSSL_DISABLE_SHA256) && !defined(ARDUINO_ARCH_MEGAAVR)
 SHA256Class SHA256;
 #endif
