@@ -44,10 +44,13 @@ jobs:
         board:
           - fqbn: arduino:samd:mkr1000
             type: wifi101
+            artifact-name-suffix: arduino-samd-mkr1000
           - fqbn: arduino:samd:mkrgsm1400
             type: gsm
+            artifact-name-suffix: arduino-samd-mkrgsm1400
           - fqbn: arduino:megaavr:uno2018
             type: megaavr
+            artifact-name-suffix: arduino-megaavr-uno2018
 
         # make board type-specific customizations to the matrix jobs
         include:
@@ -91,4 +94,4 @@ jobs:
         with:
           if-no-files-found: error
           path: ${{ env.SKETCHES_REPORTS_PATH }}
-          name: ${{ env.SKETCHES_REPORTS_PATH }}
+          name: sketches-report-${{ matrix.board.artifact-name-suffix }}
