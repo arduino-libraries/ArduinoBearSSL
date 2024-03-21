@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include <ArduinoBearSSL.h>
 #include "DES.h"
 
 DESClass::DESClass() :
@@ -50,6 +51,6 @@ int DESClass::runDecryption(uint8_t *key, size_t size, uint8_t *input, size_t bl
 }
 
 
-#ifndef ARDUINO_ARCH_MEGAAVR
+#if !defined(ARDUINO_BEARSSL_DISABLE_DES) && !defined(ARDUINO_ARCH_MEGAAVR)
 DESClass DES;
 #endif
