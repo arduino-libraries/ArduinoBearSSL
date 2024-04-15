@@ -32,7 +32,7 @@
 #endif
 
 #ifndef BEAR_SSL_CLIENT_IBUF_SIZE
-#define BEAR_SSL_CLIENT_IBUF_SIZE 32768
+#define BEAR_SSL_CLIENT_IBUF_SIZE (16384 + 325)
 #endif
 
 #else
