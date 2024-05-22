@@ -59,6 +59,7 @@
 class BearSSLClient : public Client {
 
 public:
+  BearSSLClient();
   BearSSLClient(Client& client);
   BearSSLClient(Client& client, const br_x509_trust_anchor* myTAs, int myNumTAs);
   BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, int myNumTAs);
