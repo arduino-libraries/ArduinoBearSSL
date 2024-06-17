@@ -48,6 +48,21 @@ jobs:
           - fqbn: arduino:samd:mkrgsm1400
             type: gsm
             artifact-name-suffix: arduino-samd-mkrgsm1400
+          - fqbn: arduino:samd:mkrnb1500
+            type: nb
+            artifact-name-suffix: arduino-samd-mkrnb1500
+          - fqbn: arduino:mbed_portenta:envie_m7
+            type: mbed_portenta
+            artifact-name-suffix: arduino-mbed_portenta-envie_m7
+          - fqbn: arduino:mbed_nano:nanorp2040connect
+            type: nina
+            artifact-name-suffix: arduino-mbed_nano-nanorp2040connect
+          - fqbn: arduino:mbed_opta:opta
+            type: mbed_opta
+            artifact-name-suffix: arduino-mbed_opta-opta
+          - fqbn: arduino:mbed_giga:giga
+            type: mbed_giga
+            artifact-name-suffix: arduino-mbed_giga-giga
           - fqbn: arduino:megaavr:uno2018
             type: megaavr
             artifact-name-suffix: arduino-megaavr-uno2018
