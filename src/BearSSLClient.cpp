@@ -411,6 +411,7 @@ void BearSSLClient::setKey(const char key[], const char cert[])
 }
 #endif
 
+#if BEAR_SSL_CLIENT_CHAIN_SIZE > 1
 void BearSSLClient::setEccCertParent(const char cert[])
 {
   // try to decode the cert
@@ -457,6 +458,7 @@ void BearSSLClient::setEccCertParent(const char cert[])
     }
   }
 }
+#endif
 
 int BearSSLClient::errorCode()
 {
@@ -621,6 +623,7 @@ void BearSSLClient::clientAppendKey(void *ctx, const void *data, size_t len)
 }
 #endif
 
+#if BEAR_SSL_CLIENT_CHAIN_SIZE > 1
 void BearSSLClient::parentAppendCert(void *ctx, const void *data, size_t len)
 {
   BearSSLClient* c = (BearSSLClient*)ctx;
@@ -628,4 +631,4 @@ void BearSSLClient::parentAppendCert(void *ctx, const void *data, size_t len)
   memcpy(&c->_ecCert[1].data[c->_ecCert[1].data_len], data, len);
   c->_ecCert[1].data_len += len;
 }
-
+#endif

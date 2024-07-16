@@ -101,7 +101,9 @@ public:
 #ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   void setKey(const char key[], const char cert[]);
 #endif
+#if BEAR_SSL_CLIENT_CHAIN_SIZE > 1
   void setEccCertParent(const char cert[]);
+#endif
 
   int errorCode();
 
@@ -113,7 +115,9 @@ private:
 #ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   static void clientAppendKey(void *ctx, const void *data, size_t len);
 #endif
+#if BEAR_SSL_CLIENT_CHAIN_SIZE > 1
   static void parentAppendCert(void *ctx, const void *data, size_t len);
+#endif
 
 private:
   Client* _client;
