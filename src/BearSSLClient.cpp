@@ -28,14 +28,32 @@
 #include <ArduinoECCX08.h>
 #endif
 
+#ifndef ARDUINO_BEARSSL_DISABLE_BUILTIN_TRUST_ANCHORS
 #include "BearSSLTrustAnchors.h"
+#endif
 #include "utility/eccX08_asn1.h"
 
 #include "BearSSLClient.h"
 
+#ifndef ARDUINO_BEARSSL_DISABLE_BUILTIN_TRUST_ANCHORS
 BearSSLClient::BearSSLClient(Client& client) :
   BearSSLClient(&client, TAs, TAs_NUM)
 {
+}
+#endif
+
+BearSSLClient::BearSSLClient() :
+  _noSNI(false)
+{
+  _ecKey.curve = 0;
+  _ecKey.x = NULL;
+  _ecKey.xlen = 0;
+
+  for (size_t i = 0; i < BEAR_SSL_CLIENT_CHAIN_SIZE; i++) {
+    _ecCert[i].data = NULL;
+    _ecCert[i].data_len = 0;
+  }
+  _ecCertDynamic = false;
 }
 
 BearSSLClient::BearSSLClient(Client& client, const br_x509_trust_anchor* myTAs, int myNumTAs)
@@ -48,8 +66,15 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _TAs(myTAs),
   _numTAs(myNumTAs),
   _noSNI(false),
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   _skeyDecoder(NULL),
-  _ecChainLen(0)
+#endif
+  _ecChainLen(0),
+#ifndef ARDUINO_BEARSSL_DISABLE_FULL_CLIENT_PROFILE
+  _br_ssl_client_init_function(br_ssl_client_init_full)
+#else
+  _br_ssl_client_init_function(NULL)
+#endif
 {
 #ifndef ARDUINO_DISABLE_ECCX08
   _ecVrfy = eccX08_vrfy_asn1;
@@ -77,10 +102,12 @@ BearSSLClient::~BearSSLClient()
     _ecCert[0].data = NULL;
   }
 
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   if (_skeyDecoder) {
     free(_skeyDecoder);
     _skeyDecoder = NULL;
   }
+#endif
 }
 
 int BearSSLClient::connect(IPAddress ip, uint16_t port)
@@ -309,6 +336,7 @@ void BearSSLClient::setEccSlot(int ecc508KeySlot, const char cert[])
   }
 }
 
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
 void BearSSLClient::setKey(const char key[], const char cert[])
 {
   // try to decode the key and cert
@@ -381,7 +409,9 @@ void BearSSLClient::setKey(const char key[], const char cert[])
     }
   }
 }
+#endif
 
+#if BEAR_SSL_CLIENT_CHAIN_SIZE > 1
 void BearSSLClient::setEccCertParent(const char cert[])
 {
   // try to decode the cert
@@ -428,6 +458,7 @@ void BearSSLClient::setEccCertParent(const char cert[])
     }
   }
 }
+#endif
 
 int BearSSLClient::errorCode()
 {
@@ -436,8 +467,12 @@ int BearSSLClient::errorCode()
 
 int BearSSLClient::connectSSL(const char* host)
 {
-  // initialize client context with all algorithms and hardcoded trust anchors
-  br_ssl_client_init_full(&_sc, &_xc, _TAs, _numTAs);
+  if (!_br_ssl_client_init_function) {
+    return 0;
+  }
+
+  // initialize client context with enabled algorithms and trust anchors
+  _br_ssl_client_init_function(&_sc, &_xc, _TAs, _numTAs);
 
   br_ssl_engine_set_buffers_bidi(&_sc.eng, _ibuf, sizeof(_ibuf), _obuf, sizeof(_obuf));
 
@@ -462,6 +497,7 @@ int BearSSLClient::connectSSL(const char* host)
 
   // enable client auth
   if (_ecCert[0].data_len) {
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
     if (_skeyDecoder) {
       int skeyType = br_skey_decoder_key_type(_skeyDecoder);
 
@@ -471,8 +507,11 @@ int BearSSLClient::connectSSL(const char* host)
         br_ssl_client_set_single_rsa(&_sc, _ecCert, _ecChainLen, br_skey_decoder_get_rsa(_skeyDecoder), br_rsa_pkcs1_sign_get_default());
       }
     } else {
+#endif
       br_ssl_client_set_single_ec(&_sc, _ecCert, _ecChainLen, &_ecKey, BR_KEYTYPE_KEYX | BR_KEYTYPE_SIGN, BR_KEYTYPE_EC, br_ec_get_default(), _ecSign);
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
     }
+#endif
   }
 
   // set the hostname used for SNI
@@ -575,13 +614,16 @@ void BearSSLClient::clientAppendCert(void *ctx, const void *data, size_t len)
   c->_ecCert[0].data_len += len;
 }
 
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
 void BearSSLClient::clientAppendKey(void *ctx, const void *data, size_t len)
 {
   BearSSLClient* c = (BearSSLClient*)ctx;
 
   br_skey_decoder_push(c->_skeyDecoder, data, len);
 }
+#endif
 
+#if BEAR_SSL_CLIENT_CHAIN_SIZE > 1
 void BearSSLClient::parentAppendCert(void *ctx, const void *data, size_t len)
 {
   BearSSLClient* c = (BearSSLClient*)ctx;
@@ -589,4 +631,4 @@ void BearSSLClient::parentAppendCert(void *ctx, const void *data, size_t len)
   memcpy(&c->_ecCert[1].data[c->_ecCert[1].data_len], data, len);
   c->_ecCert[1].data_len += len;
 }
-
+#endif

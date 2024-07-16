@@ -32,7 +32,7 @@
 #endif
 
 #ifndef BEAR_SSL_CLIENT_IBUF_SIZE
-#define BEAR_SSL_CLIENT_IBUF_SIZE 32768
+#define BEAR_SSL_CLIENT_IBUF_SIZE (16384 + 325)
 #endif
 
 #else
@@ -59,14 +59,15 @@
 class BearSSLClient : public Client {
 
 public:
+  BearSSLClient();
   BearSSLClient(Client& client);
   BearSSLClient(Client& client, const br_x509_trust_anchor* myTAs, int myNumTAs);
   BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, int myNumTAs);
   virtual ~BearSSLClient();
 
-
   inline void setClient(Client& client) { _client = &client; }
-
+  inline void setProfile(void(*client_init_function)(br_ssl_client_context *cc, br_x509_minimal_context *xc, const br_x509_trust_anchor *trust_anchors, size_t trustrust_anchorst_anchors_num)) { _br_ssl_client_init_function = client_init_function; }
+  inline void setTrustAnchors(const br_x509_trust_anchor* myTAs, int myNumTAs) { _TAs = myTAs; _numTAs = myNumTAs; }
 
   virtual int connect(IPAddress ip, uint16_t port);
   virtual int connect(const char* host, uint16_t port);
@@ -97,8 +98,12 @@ public:
 
   void setEccSlot(int ecc508KeySlot, const byte cert[], int certLength);
   void setEccSlot(int ecc508KeySlot, const char cert[]);
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   void setKey(const char key[], const char cert[]);
+#endif
+#if BEAR_SSL_CLIENT_CHAIN_SIZE > 1
   void setEccCertParent(const char cert[]);
+#endif
 
   int errorCode();
 
@@ -107,8 +112,12 @@ private:
   static int clientRead(void *ctx, unsigned char *buf, size_t len);
   static int clientWrite(void *ctx, const unsigned char *buf, size_t len);
   static void clientAppendCert(void *ctx, const void *data, size_t len);
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   static void clientAppendKey(void *ctx, const void *data, size_t len);
+#endif
+#if BEAR_SSL_CLIENT_CHAIN_SIZE > 1
   static void parentAppendCert(void *ctx, const void *data, size_t len);
+#endif
 
 private:
   Client* _client;
@@ -121,7 +130,9 @@ private:
   br_ecdsa_sign _ecSign;
 
   br_ec_private_key _ecKey;
+#ifndef ARDUINO_BEARSSL_DISABLE_KEY_DECODER
   br_skey_decoder_context* _skeyDecoder;
+#endif
   br_x509_certificate _ecCert[BEAR_SSL_CLIENT_CHAIN_SIZE];
   int _ecChainLen;
   bool _ecCertDynamic;
@@ -131,6 +142,8 @@ private:
   unsigned char _ibuf[BEAR_SSL_CLIENT_IBUF_SIZE];
   unsigned char _obuf[BEAR_SSL_CLIENT_OBUF_SIZE];
   br_sslio_context _ioc;
+
+  void (*_br_ssl_client_init_function)(br_ssl_client_context *cc, br_x509_minimal_context *xc, const br_x509_trust_anchor *trust_anchors, size_t trust_anchors_num);
 };
 
 #endif

@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#include <ArduinoBearSSL.h>
 #include "SHA1.h"
 
 SHA1Class::SHA1Class() :
@@ -54,4 +55,6 @@ int SHA1Class::end(uint8_t *digest)
   return 1;
 }
 
+#if !defined(ARDUINO_BEARSSL_DISABLE_SHA1)
 SHA1Class SHA1;
+#endif
