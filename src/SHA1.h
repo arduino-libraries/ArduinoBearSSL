@@ -47,6 +47,6 @@ private:
   br_sha1_context _ctx;
 };
 
-extern SHA1Class SHA1;
+extern SHA1Class BearSHA1;
 
 #endif
