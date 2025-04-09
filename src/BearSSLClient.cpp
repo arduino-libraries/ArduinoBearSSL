@@ -203,10 +203,11 @@ void BearSSLClient::flush()
 void BearSSLClient::stop()
 {
   if (_client->connected()) {
+#if !defined(ARDUINO_BEARSSL_DISABLE_TLS_CLOSE)
     if ((br_ssl_engine_current_state(&_sc.eng) & BR_SSL_CLOSED) == 0) {
       br_sslio_close(&_ioc);
     }
-
+#endif
     _client->stop();
   }
 }
