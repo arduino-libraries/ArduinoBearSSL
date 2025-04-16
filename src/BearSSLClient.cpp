@@ -67,13 +67,8 @@ BearSSLClient::BearSSLClient(Client* client, const br_x509_trust_anchor* myTAs, 
   _br_ssl_client_init_function(NULL)
 #endif
 {
-#ifndef ARDUINO_DISABLE_ECCX08
-  _ecVrfy = eccX08_vrfy_asn1;
-  _ecSign = eccX08_sign_asn1;
-#else
   _ecVrfy = br_ecdsa_vrfy_asn1_get_default();
   _ecSign = br_ecdsa_sign_asn1_get_default();
-#endif
 
   _ecKey.curve = 0;
   _ecKey.x = NULL;
