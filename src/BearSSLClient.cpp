@@ -42,18 +42,9 @@ BearSSLClient::BearSSLClient(Client& client) :
 }
 #endif
 
-BearSSLClient::BearSSLClient() :
-  _noSNI(false)
+BearSSLClient::BearSSLClient()
+: BearSSLClient(nullptr, nullptr, 0)
 {
-  _ecKey.curve = 0;
-  _ecKey.x = NULL;
-  _ecKey.xlen = 0;
-
-  for (size_t i = 0; i < BEAR_SSL_CLIENT_CHAIN_SIZE; i++) {
-    _ecCert[i].data = NULL;
-    _ecCert[i].data_len = 0;
-  }
-  _ecCertDynamic = false;
 }
 
 BearSSLClient::BearSSLClient(Client& client, const br_x509_trust_anchor* myTAs, int myNumTAs)
