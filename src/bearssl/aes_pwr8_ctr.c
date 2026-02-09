@@ -55,7 +55,7 @@ ctr_128(const unsigned char *sk, const unsigned char *ivbuf,
 	cc1 = 16;
 	cc2 = 32;
 	cc3 = 48;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v10
@@ -239,7 +239,7 @@ ctr_192(const unsigned char *sk, const unsigned char *ivbuf,
 	cc1 = 16;
 	cc2 = 32;
 	cc3 = 48;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v12
@@ -435,7 +435,7 @@ ctr_256(const unsigned char *sk, const unsigned char *ivbuf,
 	cc1 = 16;
 	cc2 = 32;
 	cc3 = 48;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v14

@@ -49,7 +49,7 @@ cbcenc_128(const unsigned char *sk,
 #endif
 
 	cc = 0;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v10
@@ -153,7 +153,7 @@ cbcenc_192(const unsigned char *sk,
 #endif
 
 	cc = 0;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v12
@@ -263,7 +263,7 @@ cbcenc_256(const unsigned char *sk,
 #endif
 
 	cc = 0;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v14

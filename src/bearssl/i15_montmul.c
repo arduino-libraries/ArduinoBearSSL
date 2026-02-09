@@ -47,7 +47,7 @@ br_i15_montymul(uint16_t *d, const uint16_t *x, const uint16_t *y,
 			uint16_t *limit;
 
 			limit = d + len4;
-			asm volatile (
+			__asm__ volatile (
 "\n\
 	@ carry: r=r2                                              \n\
 	@ multipliers: xu=r3 f=r4                                  \n\
