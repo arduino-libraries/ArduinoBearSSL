@@ -25,6 +25,7 @@
 #include "inner.h"
 
 /* see inner.h */
+__attribute__((optimize("omit-frame-pointer")))
 void
 br_i15_montymul(uint16_t *d, const uint16_t *x, const uint16_t *y,
 	const uint16_t *m, uint16_t m0i)
