@@ -437,7 +437,7 @@ ctr_ ## size(const unsigned char *sk, \
 	cc1 = 16; \
 	cc2 = 32; \
 	cc3 = 48; \
-	asm volatile ( \
+	__asm__ volatile ( \
  \
 		/* \
 		 * Load subkeys into v0..v10 \
@@ -543,7 +543,7 @@ cbcmac_ ## size(const unsigned char *sk, \
 	long cc; \
  \
 	cc = 0; \
-	asm volatile ( \
+	__asm__ volatile ( \
  \
 		/* \
 		 * Load subkeys into v0..v10 \
@@ -603,7 +603,7 @@ ctrcbc_ ## size ## _encrypt(const unsigned char *sk, \
 	long cc; \
  \
 	cc = 0; \
-	asm volatile ( \
+	__asm__ volatile ( \
  \
 		/* \
 		 * Load subkeys into v0..v10 \
@@ -706,7 +706,7 @@ ctrcbc_ ## size ## _decrypt(const unsigned char *sk, \
 	long cc; \
  \
 	cc = 0; \
-	asm volatile ( \
+	__asm__ volatile ( \
  \
 		/* \
 		 * Load subkeys into v0..v10 \

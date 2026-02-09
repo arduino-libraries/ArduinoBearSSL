@@ -159,7 +159,7 @@ br_ghash_pwr8(void *y, const void *h, const void *data, size_t len)
 	cc1 = 16;
 	cc2 = 32;
 	cc3 = 48;
-	asm volatile (
+	__asm__ volatile (
 		INIT
 
 		/*
