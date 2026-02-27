@@ -66,6 +66,18 @@ jobs:
           - fqbn: arduino:megaavr:uno2018
             type: megaavr
             artifact-name-suffix: arduino-megaavr-uno2018
+          - fqbn: "arduino:zephyr_main:portentah7"
+            platform-name: arduino:zephyr_main
+            artifact-name-suffix: arduino-zephyr_main-portentah7
+          - fqbn: "arduino:zephyr_main:portentac33"
+            platform-name: arduino:zephyr_main
+            artifact-name-suffix: arduino-zephyr_main-portentac33
+          - fqbn: "arduino:zephyr_main:giga"
+            platform-name: arduino:zephyr_main
+            artifact-name-suffix: arduino-zephyr_main-giga
+          - fqbn: "arduino:zephyr_main:opta"
+            platform-name: arduino:zephyr_main
+            artifact-name-suffix: arduino-zephyr_main-opta
 
         # make board type-specific customizations to the matrix jobs
         include:
