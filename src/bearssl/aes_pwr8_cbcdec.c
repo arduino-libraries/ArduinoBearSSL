@@ -52,7 +52,7 @@ cbcdec_128(const unsigned char *sk,
 	cc1 = 16;
 	cc2 = 32;
 	cc3 = 48;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v10
@@ -223,7 +223,7 @@ cbcdec_192(const unsigned char *sk,
 	cc1 = 16;
 	cc2 = 32;
 	cc3 = 48;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v12
@@ -406,7 +406,7 @@ cbcdec_256(const unsigned char *sk,
 	cc1 = 16;
 	cc2 = 32;
 	cc3 = 48;
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * Load subkeys into v0..v14

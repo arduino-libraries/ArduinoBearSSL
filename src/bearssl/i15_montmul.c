@@ -25,6 +25,7 @@
 #include "inner.h"
 
 /* see inner.h */
+__attribute__((optimize("omit-frame-pointer")))
 void
 br_i15_montymul(uint16_t *d, const uint16_t *x, const uint16_t *y,
 	const uint16_t *m, uint16_t m0i)
@@ -47,7 +48,7 @@ br_i15_montymul(uint16_t *d, const uint16_t *x, const uint16_t *y,
 			uint16_t *limit;
 
 			limit = d + len4;
-			asm volatile (
+			__asm__ volatile (
 "\n\
 	@ carry: r=r2                                              \n\
 	@ multipliers: xu=r3 f=r4                                  \n\

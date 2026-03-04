@@ -52,7 +52,7 @@ key_schedule_128(unsigned char *sk, const unsigned char *key)
 	 * of the computation is VMX only. VMX register 0 is VSX
 	 * register 32.
 	 */
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * v0 = all-zero word
@@ -161,7 +161,7 @@ key_schedule_192(unsigned char *sk, const unsigned char *key)
 	 * of the computation is VMX only. VMX register 0 is VSX
 	 * register 32.
 	 */
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * v0 = all-zero word
@@ -299,7 +299,7 @@ key_schedule_256(unsigned char *sk, const unsigned char *key)
 	 * of the computation is VMX only. VMX register 0 is VSX
 	 * register 32.
 	 */
-	asm volatile (
+	__asm__ volatile (
 
 		/*
 		 * v0 = all-zero word
