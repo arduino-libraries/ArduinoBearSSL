@@ -25,7 +25,7 @@
 #include "ArduinoBearSSL.h"
 
 #ifndef ARDUINO_DISABLE_SECURE_ELEMENT
-#include "BSSLSecureElement.h"
+#include <Arduino_SecureElement.h>
 #endif
 
 #ifndef ARDUINO_BEARSSL_DISABLE_BUILTIN_TRUST_ANCHORS
@@ -467,7 +467,7 @@ int BearSSLClient::connectSSL(const char* host)
   unsigned char entropy[32];
 
 #ifndef ARDUINO_DISABLE_SECURE_ELEMENT
-  if (!BSSLSecureElement.begin() || !BSSLSecureElement.locked() || !BSSLSecureElement.random(entropy, sizeof(entropy))) {
+  if (!SecureElement.begin() || !SecureElement.locked() || !SecureElement.random(entropy, sizeof(entropy))) {
 #endif
     // no ECCX08 or random failed, fallback to pseudo random
     for (size_t i = 0; i < sizeof(entropy); i++) {

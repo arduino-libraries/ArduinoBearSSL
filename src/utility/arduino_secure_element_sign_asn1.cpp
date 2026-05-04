@@ -28,7 +28,7 @@
 #ifndef ARDUINO_DISABLE_SECURE_ELEMENT
 #include "arduino_secure_element_asn1.h"
 
-#include <BSSLSecureElement.h>
+#include <Arduino_SecureElement.h>
 
 #define BR_MAX_EC_SIZE   528
 #define ORDER_LEN   ((BR_MAX_EC_SIZE + 7) >> 3)
@@ -45,7 +45,7 @@ arduino_secure_element_sign_asn1(const br_ec_impl * /*impl*/,
     return 0;
   }
 
-  if (!BSSLSecureElement.ecSign((int)(sk->x), (const uint8_t*)hash_value, (uint8_t*)rsig)) {
+  if (!SecureElement.ecSign((int)(sk->x), (const uint8_t*)hash_value, (uint8_t*)rsig)) {
     return 0;
   }
   sig_len = 64;
