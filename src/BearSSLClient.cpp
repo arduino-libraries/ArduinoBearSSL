@@ -24,14 +24,14 @@
 
 #include "ArduinoBearSSL.h"
 
-#ifndef ARDUINO_DISABLE_ECCX08
-#include <ArduinoECCX08.h>
+#ifndef ARDUINO_DISABLE_SECURE_ELEMENT
+#include "BSSLSecureElement.h"
 #endif
 
 #ifndef ARDUINO_BEARSSL_DISABLE_BUILTIN_TRUST_ANCHORS
 #include "BearSSLTrustAnchors.h"
 #endif
-#include "utility/eccX08_asn1.h"
+#include "utility/arduino_secure_element_asn1.h"
 
 #include "BearSSLClient.h"
 
@@ -265,12 +265,12 @@ void BearSSLClient::setEccSlot(int ecc508KeySlot, const byte cert[], int certLen
   _ecChainLen = 1;
   _ecCertDynamic = false;
 
-#ifndef ARDUINO_DISABLE_ECCX08
-  _ecVrfy = eccX08_vrfy_asn1;
-  _ecSign = eccX08_sign_asn1;
-#else
+#ifdef ARDUINO_DISABLE_SECURE_ELEMENT
   _ecVrfy = br_ecdsa_vrfy_asn1_get_default();
   _ecSign = br_ecdsa_sign_asn1_get_default();
+#else
+  _ecVrfy = arduino_secure_element_vrfy_asn1;
+  _ecSign = arduino_secure_element_sign_asn1;
 #endif
 }
 
@@ -466,14 +466,14 @@ int BearSSLClient::connectSSL(const char* host)
   // inject entropy in engine
   unsigned char entropy[32];
 
-#ifndef ARDUINO_DISABLE_ECCX08
-  if (!ECCX08.begin() || !ECCX08.locked() || !ECCX08.random(entropy, sizeof(entropy))) {
+#ifndef ARDUINO_DISABLE_SECURE_ELEMENT
+  if (!BSSLSecureElement.begin() || !BSSLSecureElement.locked() || !BSSLSecureElement.random(entropy, sizeof(entropy))) {
 #endif
     // no ECCX08 or random failed, fallback to pseudo random
     for (size_t i = 0; i < sizeof(entropy); i++) {
       entropy[i] = random(0, 255);
     }
-#ifndef ARDUINO_DISABLE_ECCX08
+#ifndef ARDUINO_DISABLE_SECURE_ELEMENT
   }
 #endif
   br_ssl_engine_inject_entropy(&_sc.eng, entropy, sizeof(entropy));

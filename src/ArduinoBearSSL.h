@@ -25,10 +25,17 @@
 #ifndef _ARDUINO_BEAR_SSL_H_
 #define _ARDUINO_BEAR_SSL_H_
 
+#include "BSSLSecureElement.h"
+
 #if defined __has_include
 #  if __has_include (<ArduinoBearSSLConfig.h>)
 #    include <ArduinoBearSSLConfig.h>
 #  endif
+#endif
+
+#if defined(ARDUINO_DISABLE_ECCX08) || (!defined(BSSLSECURE_ELEMENT_IS_ECCX08) &&\
+    !defined(SECURE_ELEMENT_IS_SE05X))
+#define ARDUINO_DISABLE_SECURE_ELEMENT
 #endif
 
 #include "BearSSLClient.h"
