@@ -25,16 +25,16 @@
 
 #include "ArduinoBearSSL.h"
 
-#ifndef ARDUINO_DISABLE_ECCX08
-#include "eccX08_asn1.h"
+#ifndef ARDUINO_DISABLE_SECURE_ELEMENT
+#include "arduino_secure_element_asn1.h"
 
-#include <ArduinoECCX08.h>
+#include <BSSLSecureElement.h>
 
 #define BR_MAX_EC_SIZE   528
 #define ORDER_LEN   ((BR_MAX_EC_SIZE + 7) >> 3)
 
 size_t
-eccX08_sign_asn1(const br_ec_impl * /*impl*/,
+arduino_secure_element_sign_asn1(const br_ec_impl * /*impl*/,
   const br_hash_class * /*hf*/, const void *hash_value,
   const br_ec_private_key *sk, void *sig)
 {
@@ -45,7 +45,7 @@ eccX08_sign_asn1(const br_ec_impl * /*impl*/,
     return 0;
   }
 
-  if (!ECCX08.ecSign((int)(sk->x), (const uint8_t*)hash_value, (uint8_t*)rsig)) {
+  if (!BSSLSecureElement.ecSign((int)(sk->x), (const uint8_t*)hash_value, (uint8_t*)rsig)) {
     return 0;
   }
   sig_len = 64;

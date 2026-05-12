@@ -10,7 +10,7 @@ image:https://github.com/{repository-owner}/{repository-name}/actions/workflows/
 Port of https://bearssl.org[BearSSL] to Arduino.
 
 This library depends on https://github.com/arduino-libraries/ArduinoECCX08[ArduinoECCX08]. This dependency could be
-disabled by defining `ARDUINO_DISABLE_ECCX08` in `ArduinoBearSSLConfig.h` file.
+disabled by defining `ARDUINO_DISABLE_SECURE_ELEMENT` in `ArduinoBearSSLConfig.h` file.
 
 To do this create a configuration library called `ArduinoBearSSLConfig` with the
 following file structure:
@@ -25,7 +25,7 @@ following file structure:
 ArduinoBearSSLConfig.h
 ```
 #pragma once
-#define ARDUINO_DISABLE_ECCX08
+#define ARDUINO_DISABLE_SECURE_ELEMENT
 ```
 library.properties
 ```

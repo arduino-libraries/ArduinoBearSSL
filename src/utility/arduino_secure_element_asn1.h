@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2016 Thomas Pornin <pornin@bolet.org>
  * Copyright (c) 2018 Arduino SA. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining 
@@ -23,44 +22,20 @@
  * SOFTWARE.
  */
 
-#include "ArduinoBearSSL.h"
+#ifndef _ECCX08_ASN1_H_
+#define _ECCX08_ASN1_H_
 
-#ifndef ARDUINO_DISABLE_ECCX08
-#include "eccX08_asn1.h"
+#include "bearssl/bearssl.h"
 
-#include <ArduinoECCX08.h>
-
-#define BR_MAX_EC_SIZE   528
-#define FIELD_LEN   ((BR_MAX_EC_SIZE + 7) >> 3)
+size_t
+arduino_secure_element_sign_asn1(const br_ec_impl *impl,
+  const br_hash_class *hf, const void *hash_value,
+  const br_ec_private_key *sk, void *sig);
 
 uint32_t
-eccX08_vrfy_asn1(const br_ec_impl * /*impl*/,
+arduino_secure_element_vrfy_asn1(const br_ec_impl *impl,
   const void *hash, size_t hash_len,
   const br_ec_public_key *pk,
-  const void *sig, size_t sig_len)
-{
-  /*
-   * We use a double-sized buffer because a malformed ASN.1 signature
-   * may trigger a size expansion when converting to "raw" format.
-   */
-  unsigned char rsig[(FIELD_LEN << 2) + 24];
+  const void *sig, size_t sig_len);
 
-  if (sig_len > ((sizeof rsig) >> 1)) {
-    return 0;
-  }
-
-  memcpy(rsig, sig, sig_len);
-  sig_len = br_ecdsa_asn1_to_raw(rsig, sig_len);
-
-  if (hash_len != 32 || pk->curve != BR_EC_secp256r1 || pk->qlen != 65 || sig_len != 64) {
-    return 0;
-  }
-
-  // TODO: understand why the public key is &pk->q[1] instead of &pk->q[0] ...
-  if (!ECCX08.ecdsaVerify((const uint8_t*)hash, (const uint8_t*)rsig, (const uint8_t*)&pk->q[1])) {
-    return 0;
-  }
-
-  return 1;
-}
 #endif
