@@ -25,8 +25,6 @@
 #ifndef _ARDUINO_BEAR_SSL_H_
 #define _ARDUINO_BEAR_SSL_H_
 
-#include "BSSLSecureElement.h"
-
 #if defined __has_include
 #  if __has_include (<ArduinoBearSSLConfig.h>)
 #    include <ArduinoBearSSLConfig.h>
