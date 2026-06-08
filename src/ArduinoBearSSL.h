@@ -31,6 +31,12 @@
 #  endif
 #endif
 
+#if defined __has_include
+#  if __has_include (<SecureElementConfig.h>)
+#    include <SecureElementConfig.h>
+#  endif
+#endif
+
 #if defined(ARDUINO_DISABLE_ECCX08) || (!defined(SECURE_ELEMENT_IS_ECCX08) &&\
     !defined(SECURE_ELEMENT_IS_SE050))
 #define ARDUINO_DISABLE_SECURE_ELEMENT
