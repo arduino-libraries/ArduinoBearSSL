@@ -28,7 +28,7 @@
 #ifndef ARDUINO_DISABLE_SECURE_ELEMENT
 #include "arduino_secure_element_asn1.h"
 
-#include <BSSLSecureElement.h>
+#include <Arduino_SecureElement.h>
 
 #define BR_MAX_EC_SIZE   528
 #define FIELD_LEN   ((BR_MAX_EC_SIZE + 7) >> 3)
@@ -57,7 +57,7 @@ arduino_secure_element_vrfy_asn1(const br_ec_impl * /*impl*/,
   }
 
   // TODO: understand why the public key is &pk->q[1] instead of &pk->q[0] ...
-  if (!BSSLSecureElement.ecdsaVerify((const uint8_t*)hash, (const uint8_t*)rsig, (const uint8_t*)&pk->q[1])) {
+  if (!SecureElement.ecdsaVerify((const uint8_t*)hash, (const uint8_t*)rsig, (const uint8_t*)&pk->q[1])) {
     return 0;
   }
 
