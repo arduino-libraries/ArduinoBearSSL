@@ -34,9 +34,9 @@ void printSHA1(const char* str) {
   Serial.print(str);
   Serial.print("' is 0x");
 
-  SHA1.beginHash();
-  SHA1.print(str);
-  SHA1.endHash();
+  BearSHA1.beginHash();
+  BearSHA1.print(str);
+  BearSHA1.endHash();
 
   printResult();
 }
@@ -48,17 +48,17 @@ void printHMACSHA1(const char* secret, const char* str) {
   Serial.print(secret);
   Serial.print("' is 0x");
 
-  SHA1.beginHmac(secret);
-  SHA1.print(str);
-  SHA1.endHmac();
+  BearSHA1.beginHmac(secret);
+  BearSHA1.print(str);
+  BearSHA1.endHmac();
 
   printResult();
 }
 
 void printResult()
 {
-  while (SHA1.available()) {
-    byte b = SHA1.read();
+  while (BearSHA1.available()) {
+    byte b = BearSHA1.read();
 
     if (b < 16) {
       Serial.print("0");
